@@ -2,65 +2,546 @@
 title: 'Part 1: Background and Basics'
 author: "Michael Kane, Yale University"
 output: 
-  html_document:
-    toc: true
+  ioslides_presentation:
     theme: flatly
 ---
 
-# Welcome to Python for R Programmers
+# Welcome to Bootstrap Learning Python with R
 
 ## What are the goals of this class?
 
+Learn how to translate your R programming skills to other langauges, Python in particular.
+
+Separate programming language _syntax_ from programming _constructs_.
+
+Appreciate the linguistic differences between R and Python and think about the implications for expressing computations and execution efficiency.
+
+Be able to evaluate objective strengths and weaknesses of a programming language.
+
 ## How will this class be taught?
+
+I'm going to start with a core-programming constructs in R. I'll describe it, show how it works, and talk about some of it's distinguishing characteristics
+
+I'll show the equivalent/analogous construct in Python. I'll describe it, show how it works, and we'll discuss some of the differences
+
+You will follow along.
+
+You execute the code, modify it, maybe (probably) break it, and ask questions.
 
 ## Who am I and why should you listen to me?
 
-# Programming in Multiple Languages
+My name is Michael Kane, I'm an Assistant Professor of Biostatistics at Yale University and I work on methods in optimization-based machine learning, numerical and statistical computing.
+
+I have a degree in Computer Engineering, master's degrees in Electrical Engineering and Statistics, and a Ph.D. in Statistics.
+
+I've been a software architect and developer for a couple of different start-ups and other businesses. I built software in ~15 different programming languages.
+
+## Who am I and why should you listen to me? (cont'd)
+
+I won the 2010 ASA Chamber's Statistical Software Award for the Bigmemory Project; a package that allows R to accomodate and compute with large matrices.
+
+I have ~7 package on [CRAN](https://cran.r-project.org/) and have developed packages (in Python and R) featured in [DARPA's Open Software Catalog](https://www.darpa.mil/opencatalog?PP=49).
+
+I'm a founding member and of a start-up specializing in clinical trial data analyses where I architect and develop key (mostly cloud-based) analysis infrastructure.
+
+# Becoming a Polyglot Programmer
+
+## Why learn Python 
+
+"Use the best tool for the job" is great advice if you know how to use all of the tools.
+
+Python is a great general-purpose programming language.
+- It is [popular](https://www.tiobe.com/tiobe-index/).
+- Simple syntax
+- Has a lot of facilities in non-data-science applications.
+
+You learn to separate syntax from construct.
+
+It will make you a better programmer.
 
 ## Is Python Better than R?
 
-## Why learn mulitple programming languages?
+If you are looking for a [head-to-head comparison by a computer scientist, Norm Matloff](https://github.com/matloff/R-vs.-Python-for-Data-Science) does a good job.
 
-Separating syntax from construct
+I like avoiding the questions about language + community in favor of characterizing the language.
+
+Python
+- Object-oriented focused (manages complexity in large sofware systems - Tensorflow)
+- Readable
+
+R
+- A pragmatic version of Lisp
+- More dynamic (better meta-programming capabilities - DSD's)
+
+Both of them are [Turing complete](https://en.wikipedia.org/wiki/Turing_completeness#Non-mathematical_usage), most comparisons are about areas of emphasis of the community.
 
 # Materials and Setup
 
 ## Python Virtual Environments
 
-## Running Python and R from RStudio
+"Python, like most other modern programming languages, has its own unique way of downloading, storing, and resolving packages (or modules). While this has its advantages, there were some _interesting_ decisions made about package storage, resolution [and compatibility], which has lead to some problems—particularly with how and where packages are stored."" - [realpython](https://realpython.com/python-virtual-environments-a-primer/) (emphasis added)
 
-# The Basics
+## setup-p4rp.sh {.smaller}
 
-## Syntax
+```{bash, eval = FALSE}
+# Make sure python 3 and pip3 are installed on you machine and accessible from the
+# command line.
 
-## Data Structures
+# Install virtualenv.
+pip3 install virtualenv
 
-## Control Structures
+# Create a "python for R programmer's" virtual environment.
+virtualenv -p python3 p4rp
 
+# Activate the virtual environment. Note: this works for Mac and Linux.
+source p4rp/bin/activate
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# The following *may* work on Windows.
+# p4rp\bin\activate.bat
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+# Install the needed packges.
+pip3 install pandas numpy
+```
 
-```{r}
+## Running Python and R from RStudio {.smaller}
+
+Tell RStudio/RMarkdown to use the `reticulate` package and load our newly created virtual environment.
+
+```{r comment="", echo = FALSE}
+cat("```{r}\n# R\nlibrary(reticulate)\nuse_virtualenv(\"./p4rp\")\n```")
+```
+
+```{r echo = FALSE}
 library(reticulate)
 use_virtualenv("./p4rp")
 ```
 
+Now check that it works:
+
+```{r comment="", echo = FALSE}
+cat("```{python}\n# Python\nprint(\"Hello world from Python!\")\n```")
+```
+
+```{python echo = FALSE}
+print("Hello world from Python!")
+```
+
+# The Basics
+
+## Style (according to [PEP-8](https://www.python.org/dev/peps/pep-0008))
+
+Python doesn't use { } to enclose code blocks it uses indentation. _[Four spaces](https://www.python.org/dev/peps/pep-0008/#indentation)_ is recommended.
+
+[Line length should be limited to 72 characters](https://www.python.org/dev/peps/pep-0008/#maximum-line-length).
+
+[Functions and variables should use lowercase with words separated by underscores as necessary to improve readability](https://www.python.org/dev/peps/pep-0008/#method-names-and-instance-variables).
+
+Variables, types, and functions cannot contain "." This is an infix operator in Python and it's used to call methods (functions) and member variables.
+
+## Getting help
+
+Python's help function is `help()`. R's help function is the prefix operator `?`.
+
+```{r eval = FALSE}
+# R
+# Get help on the ? function
+?`?`
+```
+
+```{python eval = FALSE}
+# Python
+# Get help on the help function
+help(help)
+```
+
+## Variables and Assignment
+
+In Python assignments are performed using `=`. There is no `<-`
+
+```{r}
+# R
+a <- 3
+print(a + 2)
+```
+
 ```{python}
-#print(dir())
-import sys
-print (sys.version)
-import pandas
+# Python
+a = 3
+print(a + 2)
+```
+
+## Basic types {.smaller}
+
+```{r}
+# R
+# Note: factor and raw not included
+logical <- TRUE
+numeric <- 2.72
+integer <- 42L
+complex <- 3 + 2i
+character <- "string"
+cat(logical, numeric, integer, complex, character)
+```
+
+```{python}
+# Python
+logical = True
+numeric = 2.72
+integer = 42
+complex = 3 + 2j # Note: j... like an engineer.
+character = "string"
+print(logical, numeric, integer, complex, character)
+```
+
+## What about NA, NaN, Null, -Inf, and Inf? {.smaller}
+
+Python has `None`
+
+- `NA` and others need to be imported from packages. 
+- It is rougly equivalent to `Null`.
+- We'll get to these later.
+
+"Use `is` when you want to check against an object's identity (e.g. checking to see if var is None). Use `==` when you want to check equality (e.g. Is var equal to 3?)." - [Stack Overflow User](https://stackoverflow.com/questions/14247373/python-none-comparison-should-i-use-is-or#14247383)
+
+```{python}
+#Python
+a = None
+print(a is None)
+```
+
+
+# Control Structures and Functions
+
+## if Statements {.smaller}
+
+```{r}
+# R
+confused <- FALSE
+if (!confused) {
+  cat("I'm getting it.")
+} else {
+  cat("Huh?")
+}
+```
+
+```{python}
+# Python
+confused = False
+if not confused:
+    print("I'm getting it.")
+else:
+    print("Huh?")
+```
+
+## `if-elif-else` {.smaller}
+
+```{python}
+# Python
+confusion_level = 0 # assume confusion is 0 to 10 (very confused)
+if 0 <= confusion_level < 3:
+    print("I'm getting it.")
+elif 3 <= confusion_level < 6:
+    print("I'm kind of getting it.")
+elif 6 < confusion_level <= 10:
+    print("I'm not really getting it.")
+else:
+    print("Where am I?")
+```
+
+## `for` Loops {.smaller}
+
+```{R}
+# R
+for (i in c(1, 2, 3)) {
+  print(i)
+}
+```
+
+```{python}
+# Python
+for i in (1, 2, 3):
+    print(i)
+```
+
+## Another `for` Loop {.smaller}
+
+```{R}
+# R
+for (i in seq_len(3)) {
+  print(i)
+}
+```
+
+```{python}
+# Python
+for i in range(3):
+    print(i+1)
+```
+
+## `while` Loops {.smaller}
+
+```{R}
+# R
+i <- 1
+while (i < 4) {
+  print(i)
+  i <- i + 1
+}
+```
+
+```{python}
+# Python
+i = 1
+while i < 4:
+    print(i)
+    i += 1
+```
+
+## Functions
+
+```{r}
+# R
+add_one <- function(v) {
+  v + 1
+}
+
+cat(add_one(3))
+```
+
+```{python}
+# Python
+def add_one(v):
+    return v + 1
+    
+print(add_one(3))
+```
+
+## Don't forget to return values you want
+
+```{python}
+# Python
+def add_one(v):
+    ret = v + 1
+    print(ret)
+    ret
+    
+print(add_one(3))
+```
+
+# Lists
+
+## R Lists {.smaller}
+
+```{r}
+# R
+v <- list(1, 2)
+print(v)
 ```
 
 ```{r}
-a <- 3
+# R
+v <- c(v, list(3))
+print(v)
+```
+
+## R Lists Continued {.smaller}
+
+```{r}
+# R
+print(v[-1])
+```
+
+## Python Lists {.smaller}
+
+```{python}
+# Python
+v = [1, 2]
+print(v)
+```
+
+```{python}
+# Python
+v = [1, 2]
+print(v + [3])
+```
+
+## Python Lists Continued {.smaller}
+
+```{python}
+# Python
+v = [1, 2, 3]
+print(v[-1])
+```
+
+## List Indexing {.smaller}
+
+R indexes start at 1. Python starts at 0.
+
+```{r}
+# R
+v <- c('a', 'b', 'c')[3]
+cat(v)
+```
+
+```{python}
+# Python
+v = ['a', 'b', 'c']
+print(v[2])
+```
+
+## List Range Indexing {.smaller}
+
+R indexes from the first argument _through_ the second. Python indexes from the first _up to_ the last (non-inclusive).
+
+```{r}
+# R
+v <- c('a', 'b', 'c')[1:2]
+cat(v)
+```
+
+```{python}
+# Python
+v = ['a', 'b', 'c']
+print(v[0:2])
+print(v[:2])
+```
+
+## Lists can contain values with different types {.smaller}
+
+```{python}
+# Python
+list_vals = [1, '2', None]
+
+def add_one(list_vals):
+    for i in range(len(list_vals)):
+        if list_vals[i] is None:
+            print("Value at index " + str(i) + " is None. Not adding 1.")
+        elif isinstance(list_vals[i], str):
+            list_vals[i] = str(int(list_vals[i]) + 1)
+        elif isinstance(list_vals[i], int):
+            list_vals[i] += 1
+        else:
+            print("Unsupported type at ", i, ". Not doing anything")
+    return list_vals
+
+print(list_vals)
+print(add_one(list_vals))
+print(list_vals)
+```
+
+## Values are passed _by reference_ {.smaller}
+
+```{python}
+# Python
+list_vals = [1, '2', None]
+
+def add_one(list_vals):
+    ret_vals = list_vals.copy()
+    for i in range(len(ret_vals)):
+        if ret_vals[i] is None:
+            print("Value at index " + str(i) + " is None. Not adding 1.")
+        elif isinstance(ret_vals[i], str):
+            ret_vals[i] = str(int(ret_vals[i]) + 1)
+        elif isinstance(ret_vals[i], int):
+            ret_vals[i] += 1
+        else:
+            print("Unsupported type at ", i, ". Not doing anything")
+    return ret_vals
+
+lv_one_added = add_one(list_vals)
+print(lv_one_added)
+print(list_vals)
+```
+
+## `=` Doesn't copy lists
+
+```{python}
+# Python
+a = [3]
+b = a
+b[0] = 4
 print(a)
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+## It does copy singletons
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+```{python}
+# Python
+a = 3
+b = a
+b = 4
+print(a)
+```
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+## Lists are not like R vectors {.smaller}
+
+```{r}
+# R
+a <- 1:3
+print(a + 1)
+```
+
+```{python error = TRUE}
+# Python
+a = list(range(1, 4))
+print(a)
+a + 1
+```
+## List Comprehensions {.smaller}
+
+```{r}
+# R
+l <- as.list(1:3)
+print(lapply(l, function(x) x + 1))
+```
+
+```{python}
+# Python
+l = list(range(1, 4))
+print( [x + 1 for x in l] )
+```
+
+## A note on Tuples {.smaller}
+
+In Python a tuple is an _immutable_ list. 
+
+```{python error = TRUE}
+t1 = 1, 2, 3   # Create a tuple like this...
+t2 = (1, 2, 3) # or like this
+
+t1[1] = 2 # Throws an error
+
+first_equal, second_equal, third_equal = [ t1[i] == t2[i] for i in range(len(t1)) ]
+print(first_equal, second_equal, third_equal)
+```
+
+# Dictionaries 
+
+## Dictionaries in Python are named lists in R) {.smaller}
+
+```{r}
+# R
+l <- list(a = c(1:3), b = c("c", "d", "e", "f"))
+l$b[2:4]
+```
+
+```{python}
+# Python
+l = {'a' : list(range(1, 4)),
+     'b' : ["c", "d", "e", "f"]
+     }
+     
+print(l['b'][1:4])
+```
+
+## Dictionaries are composed of keys and values {.smaller}
+
+```{python}
+# Python
+l = {'a' : list(range(1, 4)),
+     'b' : ["c", "d", "e", "f"]
+    }
+
+print(l.keys())
+print(l.values())
+```

@@ -8,8 +8,8 @@ by the American Statistical Association.
 # The Course
 
 The course is scheduled from 8:30 AM to 5:00 PM on July 27, 2019 
-(Location TBD). All materials will be posted to this Github repository 
-as it becomes available.
+in room 405 of the Colorado Convention Center. All materials will be posted to 
+this Github repository as it becomes available.
 
 ## Format
 

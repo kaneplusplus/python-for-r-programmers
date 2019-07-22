@@ -1,5 +1,5 @@
-# Make sure python 3 is installed on you machine and accessible from the
-# command line.
+# Make sure python 3 and pip3 are installed on you machine and accessible 
+# from the command line.
 
 # Install virtualenv.
 pip3 install virtualenv
@@ -13,5 +13,5 @@ source p4rp/bin/activate
 # The following *may* work on Windows.
 # p4rp\bin\activate.bat
 
-# Install the needed packges.
+# Install the needed packages.
 pip3 install pandas numpy
