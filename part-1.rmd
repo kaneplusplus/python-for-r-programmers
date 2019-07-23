@@ -79,7 +79,9 @@ Both of them are [Turing complete](https://en.wikipedia.org/wiki/Turing_complete
 
 ## Python Virtual Environments
 
-"Python, like most other modern programming languages, has its own unique way of downloading, storing, and resolving packages (or modules). While this has its advantages, there were some _interesting_ decisions made about package storage, resolution [and compatibility], which has lead to some problems—particularly with how and where packages are stored."" - [realpython](https://realpython.com/python-virtual-environments-a-primer/) (emphasis added)
+"Python, like most other modern programming languages, has its own unique way of downloading, storing, and resolving packages (or modules). While this has its advantages, there were some _interesting_ decisions made about package storage, resolution [and compatibility], which has lead to some problems—particularly with how and where packages are stored." 
+
+-- [realpython](https://realpython.com/python-virtual-environments-a-primer/) (emphasis added)
 
 ## setup-p4rp.sh {.smaller}
 
@@ -99,7 +101,7 @@ source p4rp/bin/activate
 # The following *may* work on Windows.
 # p4rp\bin\activate.bat
 
-# Install the needed packges.
+# Install the needed packages.
 pip3 install pandas numpy
 ```
 
@@ -151,7 +153,7 @@ Python's help function is `help()`. R's help function is the prefix operator `?`
 ```{python eval = FALSE}
 # Python
 # Get help on the help function
-help(help)
+help("help"")
 ```
 
 ## Variables and Assignment
@@ -406,7 +408,7 @@ print(v[0:2])
 print(v[:2])
 ```
 
-## Lists can contain values with different types {.smaller}
+## Lists containing values with different types {.smaller}
 
 ```{python}
 # Python
@@ -424,6 +426,12 @@ def add_one(list_vals):
             print("Unsupported type at ", i, ". Not doing anything")
     return list_vals
 
+```
+
+## Lists containing values with different types (cont'd) {.smaller}
+
+```{python}
+# Python
 print(list_vals)
 print(add_one(list_vals))
 print(list_vals)
@@ -447,7 +455,12 @@ def add_one(list_vals):
         else:
             print("Unsupported type at ", i, ". Not doing anything")
     return ret_vals
+```
 
+## Values are passed _by reference_ (cont'd) {.smaller}
+
+```{python}
+# Python
 lv_one_added = add_one(list_vals)
 print(lv_one_added)
 print(list_vals)
