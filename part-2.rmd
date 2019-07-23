@@ -1,0 +1,278 @@
+---
+title: 'Part 2: Digging Deeper into Python Programming Constructs'
+author: "Michael Kane, Yale University"
+output: 
+  ioslides_presentation:
+    theme: flatly
+    smaller: true
+---
+
+```{r echo = FALSE}
+library(reticulate)
+use_virtualenv("./p4rp")
+```
+
+# Overview of Part 2 {.smaller}
+
+## Highlights from Part 1
+
+### 1. Python has a notion of environments which enacapsulate the interpreter and a set of package
+
+### 2. Python syntax is distinct from, but not unrelated to R
+
+### 3. Most of the time we've call functions with `function(object)` but sometimes it's been `object.function()` (as with copy). We'll talk more about this later.
+
+### 4. Zero indexing.
+
+## Topics for this part
+
+### 1. Packages
+
+### 2. Numeric computing with Numpy.
+
+### 3. Iterators
+
+# Packages
+
+## Python is "batteries not included"
+
+R includes _a lot_ of computing facilities with the core language.
+
+1. Plotting
+2. Vectors, matrices, and arrays
+3. Optimized and vectorized linear algebra routines
+4. Suite of statistical functions and models
+5. `data.frame`s
+
+None of these are included with Python.
+
+## Python Virtual Environments and Package Management
+
+This class uses virtualenv to create an environment and pip3 within the environment to add packages. Packages are install from [PyPI](https://pypi.org/).
+
+[Anaconda](https://www.anaconda.com/) is another option for both creating environments and adding packages from [Anaconda Cloud](https://anaconda.org/anaconda/repo). It is an environment and package manager, not just for Python. There is an R installation, I have heard only bad things about this build.
+
+## What's with the emphasis on environments? {.smaller}
+
+Development culture is different than R's
+
+- R community (CRAN maintainers) place a higher value on package user's time by enforcing _downstream dependencies_. This is the reason R's `install.packages()` function "just works". It does a better job of hiding analysts from package development.
+- Python community places higher value on developer time. It is often up to the user to sort out compatibility problems between packages. This became a big enough issue that companies, like [Continuum Analytics](http://www.continuumanalytics.com/), began creating pre-packaged virtual environments.
+
+Result is that R users use environments (with `packrat`, `switchr`, `renv`) for reproducibility, Python users use them for reproducibility and package compatibility.
+
+## A second look at setup-p4rp.sh {.smaller}
+
+```{bash, eval = FALSE}
+# Make sure python 3 and pip3 are installed on you machine and accessible from the
+# command line.
+
+# Install virtualenv.
+pip3 install virtualenv
+
+# Create a "python for R programmer's" virtual environment.
+virtualenv -p python3 p4rp
+
+# Activate the virtual environment. Note: this works for Mac and Linux.
+source p4rp/bin/activate
+
+# The following *may* work on Windows.
+# p4rp\bin\activate.bat
+
+# Install the needed packages.
+pip3 install pandas numpy
+```
+
+## Numeric Computing {.smaller}
+
+Python doesn't have a built-in notion of vectorized operations.
+
+```{python error = TRUE}
+# Python
+list(range(10)) + 1
+```
+
+We can perform this with list comprehensions. 
+
+```{python error = TRUE}
+# Python
+print( [x + 1 for x in list(range(10))] )
+```
+
+Or, we could create a method for adding values to lists, but it's already been done.
+
+## Importing the `numpy` Package {.smaller}
+
+```{python}
+# Python
+import numpy
+print( numpy.arange(10) + 1 )
+```
+
+```{python}
+# Python
+from numpy import *
+print( arange(10) + 1 )
+```
+
+```{python}
+# Python
+import numpy as np
+print( np.arange(10) + 1 )
+```
+
+## It's all arrays {.smaller}
+
+Numpy doesn't distinguish vectors, matrices, and arrays.
+
+```{python}
+# Python
+
+# A vector
+vec = np.array(list(range(12)))
+print(vec)
+
+# A matrix
+mat = np.array( [ [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12] ] )
+print(mat)
+```
+
+## It's all arrays (cont'd) {.smaller}
+
+```{python}
+# Python
+
+tensor3 = np.array( [ [[1, 2], [3, 4]], [[5, 6], [7,8]] ])
+print(tensor3)
+```
+
+## What is the dimension of a numpy array?
+
+```{python}
+# Python
+print(vec.shape)
+print(mat.shape)
+print(tensor3)
+```
+
+## How are values stored?
+
+Check the `dtype`.
+
+```{python}
+# Python
+
+tensor3.dtype
+
+double(tensor3).dtype
+
+np.array([str(x) for x in mat.flatten().tolist()], dtype = str).reshape(4, 3)
+```
+
+## What other information is stored in a numpy array? {.smaller}
+
+```{python} 
+# Python
+
+vec_slots = dir(vec)
+len(vec_slots)
+print( [vec_slots[-i] for i in range(1, 51)] )
+```
+
+## What else is in numpy? {.smaller}
+
+```{python}
+# Python
+
+np_objects = dir(np)
+len(np_objects)
+print( [np_objects[i] for i in range(70)] )
+```
+
+## Array Indexing {.smaller}
+
+```{r}
+# R
+
+mat <- t(matrix(seq_len(12), ncol = 4))
+mat
+mat[1:2, 1:3]
+```
+
+## Array Indexing (cont'd) {.smaller}
+
+```{python}
+# Python
+
+mat[:2, :3]
+
+mat[1:3, :3]
+
+mat[ [0, 3, 2], :]
+```
+
+## Boolean Indexing {.smaller}
+
+```{r}
+# R
+
+mat > 2
+mat[mat > 2]
+```
+
+## Boolean Indexing (cont'd) {.smaller}
+
+```{python}
+# Python
+
+mat > 2
+mat[mat > 2]
+```
+
+## Fiting Ordinary Least Squares
+
+Recall the formula for fitting the ordinary least squares model:
+
+$$
+\begin{align}
+\widehat{\beta} &= (X^T \ X)^{-1} \ X^T \ Y. \\
+\end{align}
+$$
+Letting $X = QR$ where $Q^TQ = I$ and $R$ is upper right triangular we can rewrite as:
+
+$$
+\begin{align}
+\widehat{\beta} &= ( (QR) ^T\  QR) ^{-1} \ (Q R)^{T} \ Y \\
+&= (QR)^{-1} \ ((QR)^T )^{-1} \ (Q R)^{T} \ Y \\
+&= (QR)^{-1} \ Y \\
+&= R^{-1} Q^T Y
+\end{align}
+$$
+to create a _numerically stable_, if not limited, implementation of OLS.
+
+## Our implementation
+
+```{python}
+# Python
+
+import seaborn as sns # for iris
+
+def ols(Y, X):
+    q, r = np.linalg.qr(X)
+    return(np.linalg.inv( r ).dot( q.T ).dot( Y ))
+
+iris = sns.load_dataset("iris")
+iris_mat = iris[["sepal_width", "petal_length", "petal_width"]].values
+
+print(ols(iris['sepal_length'].values, iris_mat))
+```
+
+## Our implementation (cont'd)
+
+```{r}
+fit <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width - 1, 
+          data = iris)
+fit$coefficients
+```
+
+# Iterators

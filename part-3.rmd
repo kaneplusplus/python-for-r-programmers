@@ -1,0 +1,29 @@
+---
+title: 'Part 3: Building Software Systems using Object-Oriented Programming'
+author: "Michael Kane, Yale University"
+output: 
+  ioslides_presentation:
+    theme: flatly
+    smaller: true
+---
+
+```{r echo = FALSE}
+library(reticulate)
+use_virtualenv("./p4rp")
+```
+
+# Overview of Part 3 {.smaller}
+
+## Highlights from Part 2
+
+
+## Topics for this part
+
+### R's dispatch
+
+### Python Classes and Objects
+
+### Iterators
+
+### Building an OLS Learner
+
