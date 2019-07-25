@@ -16,14 +16,490 @@ use_virtualenv("./p4rp")
 
 ## Highlights from Part 2
 
+### Another look at environments and packages
+
+### Numpy for R's vector/matrix/array operations
+
+### How to use Python Objects
+
+### Some Visualization
+
+## Feedback Questions
+
+### Is Python _that_ different from R?
+
+### What do you like most about Python so far?
+
+### Which Python constructs would you like to see in R?
 
 ## Topics for this part
 
-### R's dispatch
+### Function with State: R Mutable Closures and Python Generators
+
+### R and Python's dispatch
 
 ### Python Classes and Objects
 
-### Iterators
-
 ### Building an OLS Learner
+
+# Function with State: R Mutable Closures and Python Generators
+
+## In R Function with State are called _Mutable Closures_
+
+```{R}
+#R
+
+increment_generator <- function(start = 1) {
+  val <- start - 1
+  function() {
+    val <<- val + 1
+    val
+  }
+}
+
+inc <- increment_generator()
+inc()
+inc()
+```
+
+## How does this work?
+
+```{R}
+# R
+
+ls(environment(inc))
+environment(inc)$val
+b <- inc()
+environment(inc)$val
+```
+
+## So what?
+
+### This is very useful for iterating over things
+
+- in loops it means we don't have to have all of the values we are iterating over up front - we can iterate over things that are bigger than memory
+- we can easily change the size of the things we are iterating over - useful in parallel computing where number of processors varies from machine to machine.
+
+## This is the basis for iterators in R
+
+```{r}
+library(iterators)
+
+icount
+```
+
+## This is the basis for iterators in R
+
+```{r, error = TRUE}
+it <- icount(2)
+nextElem(it)
+nextElem(it)
+nextElem(it)
+nextElem(it)
+```
+
+## Which can be used with the `%foreach%` packge
+
+```{r}
+library(foreach)
+registerDoSEQ()
+
+foreach(it = icount(10), .combine = c) %dopar% {
+  it + 1
+}
+```
+
+## ... and is an excellent package for parallelization
+
+```{r}
+library(doParallel)
+registerDoParallel()
+
+# Same code. Runs in parallel.
+foreach(it = icount(10), .combine = c) %dopar% {
+  it + 1
+}
+```
+
+## R's iterators ~ Python's generators
+
+```{python, error = TRUE}
+# Python
+
+def icount(n = None):
+    if n is None or not isinstance(n, int):
+        raise ValueError("n must be an integer.")
+    i = 0
+    while n is None or i < n:
+        yield i
+        i += 1
+```
+
+## R's iterators ~ Python's generators
+
+```{python, error = TRUE}
+# Python
+
+it = icount(2)
+next(it)
+next(it)
+next(it)
+```
+
+## Generators and Loops
+
+```{python, error = TRUE}
+# Python
+
+[x + 1 for x in icount(10)]
+
+for x in icount(10):
+  print(x)
+```
+
+## Parallelizing Loops
+
+```{python}
+# Python
+
+from multiprocessing import Pool
+
+def add_one(x):
+    return x + 1
+
+p = Pool(processes = 4)
+p.map(add_one, icount(10))
+```
+
+# R and Python's Dispatches
+
+## What is Dispatch?
+
+### The choice of which version of a method to call.
+
+- If this choice is based on a single object, it is _single dispatch_
+- For multiple object - _multiple dispatch_.
+
+### A function does not dispatch.
+
+### In R: 
+- Single dispatch is supported by S3, R5 (RC) (also implemented in packges R6 and R.oo).
+- Multiple dispatch is supported by S4.
+
+### In Python
+- Single dispatch is handled with objects.
+- Multiple dispatch is available in a few packages.
+
+## A quick review of R's S3 dispatch
+
+```{r, error = TRUE, eval = FALSE}
+# R
+
+add_one <- function(x) {
+  UseMethod("add_one", x)
+}
+
+add_one.default <- function(x) {
+  stop(paste("Don't know how to add_one to object of type", class(x)))
+}
+
+add_one.numeric <- function(x) {
+  print("Dispatched to `add_one.numeric`.")
+  x
+}
+
+cat("Calling add_one on a.")
+add_one("a")
+
+cat("Calling foo on the number 1.")
+add_one(1)
+```
+
+## A quick review of R's S3 dispatch (cont'd)
+
+```{r, error = TRUE, eval = TRUE, echo = FALSE}
+# R
+
+add_one <- function(x) {
+  UseMethod("add_one", x)
+}
+
+add_one.default <- function(x) {
+  stop(paste("Don't know how to add_one to object of type", class(x)))
+}
+
+add_one.numeric <- function(x) {
+  cat("Dispatched to `add_one.numeric`.")
+  x + 1
+}
+
+cat("Calling add_one on \"a\".")
+add_one("a")
+
+cat("Calling add_one on the number 1.")
+add_one(1:10)
+```
+
+## S3 in Practice
+
+```{r, error = TRUE, eval = TRUE}
+print_methods <- methods(print)
+print(head(print_methods, 20))
+```
+
+## A Python Equivalent
+
+### We already know how to do this with either lists or numpy arrays.
+
+### The interesting part is not adding one. It is building objects that perform an operation with a common name for different types.
+
+## We are going to start by building a _class_ which describes types of objects.
+
+## The `AddOneToNumericList` Class
+
+```{python}
+# Python
+
+class AddOneToNumericList:
+    def __init__(self, lst):
+        if any( [not isinstance(x, (float, int)) for x in lst] ):
+            raise TypeError("All list elements must be int or float")
+        self.lst = lst
+    def add_one(self):
+        self.lst = [x + 1 for x in self.lst]
+    def get_lst(self):
+        return(self.lst)
+```
+
+## Creating an Instance
+
+```{python}
+# Python
+
+my_new_object = AddOneToNumericList(list(range(1, 11)))
+
+print(my_new_object.get_lst())
+
+print(my_new_object.lst)
+
+my_new_object.add_one()
+
+print(my_new_object.lst)
+
+```
+
+## Limiting access to attributes
+
+```{python}
+# Python
+
+class AddOneToNumericList:
+    def __init__(self, lst):
+        if any( [not isinstance(x, (float, int)) for x in lst] ):
+            raise TypeError("All list elements must be int or float")
+        self.__lst = lst
+    def add_one(self):
+        self.__lst = [x + 1 for x in self.__lst]
+    def get_lst(self):
+        return(self.__lst.copy())
+```
+
+## Limiting access to attributes (cont'd)
+
+```{python, error = TRUE}
+# Python
+
+my_new_object = AddOneToNumericList(list(range(1, 11)))
+
+print(my_new_object.get_lst())
+
+print(my_new_object.__lst)
+```
+
+## Let's abstract this a little bit
+
+### The class works for numeric (int and float) types.
+
+### We've already implemented adding one other other types (strings).
+
+## Let's Create an _Abstract Class_ `AddOneToList`
+
+```{python, eval = FALSE, error = TRUE}
+# Python
+
+from abc import ABC, abstractmethod 
+
+class AddOneToList(ABC):
+    @abstractmethod
+    def __init__(self, lst):
+        self._lst = lst
+
+    @abstractmethod
+    def add_one(self):
+        pass
+        
+    @abstractmethod
+    def get_lst(self):
+        pass
+
+ao = AddOneToList(list(range(1, 11)))       
+```
+
+## Let's Create an _Abstract Class_ `AddOneToList` (cont'd)
+
+```{python, echo = FALSE, error = TRUE}
+# Python
+
+from abc import ABC, abstractmethod 
+
+class AddOneToList(ABC):
+    @abstractmethod
+    def __init__(self, lst):
+        self._lst = lst
+
+    @abstractmethod
+    def add_one(self):
+        pass
+    @abstractmethod
+    def get_lst(self):
+        pass
+
+ao = AddOneToList(list(range(1, 11)))       
+```
+
+## `@abstractmethod` is a _Decorator_
+
+```{python}
+def check_second_arg_not_zero(func):
+    def inner(a1, a2):
+        if a2 == 0:
+            print("Can't divide by zero!")
+            return(None)
+        return func(a1, a2)
+    return inner
+
+@check_second_arg_not_zero
+def divide(num, denom):
+    return num / denom
+    
+divide(22, 7)
+divide(22, 0)
+```
+
+## Now Let's Create `AddOneToNumericList`
+
+```{python, error = TRUE}
+# Python
+
+class AddOneToNumericList(AddOneToList):
+
+    def add_one(self):
+        self._lst = [x + 1 for x in self._lst]
+
+    def get_lst(self):
+        return(self._lst.copy())
+ 
+ao = AddOneToNumericList(list(range(1, 11)))       
+```
+
+## Now Create a Concrete Classes
+
+```{python, error = FALSE}
+# Python
+
+class AddOneToIntList(AddOneToNumericList):
+
+    def __init__(self, lst):
+        if any( [not isinstance(x, int) for x in lst] ):
+            raise TypeError("All list elements must be int!")
+        super().__init__(lst)
+
+aoi = AddOneToIntList(list(range(1, 11)))
+aoi.add_one()
+print(aoi.get_lst())
+```
+
+## Now Create a Concrete Classes (cont'd)
+
+```{python, error = TRUE}
+# Python
+
+AddOneToIntList([float(x) for x in range(1, 11)])
+```
+
+## What if I want to support a bunch of different types and let the constructor figure out which one to make?
+
+### You want a _factory_
+
+### You provide a list, it figures out if it can create an instance of a class derived from AddOneToList and gives it to you.
+
+### You don't even need to specify the concrete types before hand.
+
+### We'll need to revise `AddOneToList`.
+
+## `AddOneToList` Redux
+
+```{python, error = FALSE}
+# Python
+
+def get_lst_type(lst):
+    if len(lst) == 0:
+        raise AssertionError("List length is zero.")
+    lst_types = [type(lst[0]) == type(x) for x in lst]
+    return type(lst[0])
+```
+
+## `AddOneToList` Redux (cont'd)
+
+```{python, error = FALSE}
+# Python
+
+class AddOneToList(ABC):
+
+    def factory(lst):
+        if get_lst_type(lst) is int:
+            return AddOneToIntList(lst)
+        else:
+            raise TypeError("Unsupported list type.")
+    
+    factory = staticmethod(factory) 
+
+    @abstractmethod
+    def __init__(self, lst):
+        self._lst = lst
+
+    @abstractmethod
+    def add_one(self):
+        pass
+    @abstractmethod
+    def get_lst(self):
+        pass
+```
+
+
+## `AddOneToList` Redux (cont'd)
+
+```{python, error = FALSE}
+lsts = [AddOneToList.factory(list(range(x))) for x in range(1, 3)]
+print(lsts)
+print(lsts[1].get_lst())
+[x.add_one() for x in lsts]
+print(lsts[1].get_lst())
+```
+
+## What's the point again?
+
+### Factories create the "right" class with a little bit of information.
+
+- they can be static, as in our example
+- or they can be dynamic, allowing users to register new concrete classes
+
+### Methods have the same interface and do different things based on class.
+
+### Examples
+
+- data importing, a class might know how to get data from various sources
+- graphics, a class might know how to create a visualization
+- model fitting, a class might know how to fit a data set
+
 

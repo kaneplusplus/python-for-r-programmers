@@ -14,4 +14,4 @@ source p4rp/bin/activate
 # p4rp\bin\activate.bat
 
 # Install the needed packages.
-pip3 install pandas numpy seaborn
+pip3 install numpy pandas seaborn plotnine joblib

@@ -30,7 +30,9 @@ use_virtualenv("./p4rp")
 
 ### 2. Numeric computing with Numpy.
 
-### 3. Iterators
+### 3. Using Objects
+
+### 3. Generators
 
 # Packages
 
@@ -229,7 +231,7 @@ mat > 2
 mat[mat > 2]
 ```
 
-## Fiting Ordinary Least Squares
+## Fitting Ordinary Least Squares
 
 Recall the formula for fitting the ordinary least squares model:
 
@@ -275,4 +277,160 @@ fit <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width - 1,
 fit$coefficients
 ```
 
-# Iterators
+# Using Objects to Visualize Data
+
+## Object Oriented Programming
+
+You've already been making use of Python's object oriented functionality.
+
+  - `list_vals.copy()`
+  - `np.linalg.inv( r ).dot( q.T )`
+  
+In each case you were accessing data or calling a function called a (method) associated with an object using the `.` operator.
+
+Packages are themselves object.
+
+### An _object_ contains data (called attributes or fields) and methods (functions).
+
+An object _has_ attributes and can do things with methods.
+
+An object is an _instance_ of a class.
+
+- `np` is an instance of type `Module`.
+- `list_vals` is an instance of type `list`.
+
+## A Primative Vector Object in R
+
+```{r}
+# R
+
+vec_vals <- list(
+  vals = 1:10,
+  add_one = function(vec_vals) {
+    vec_vals$vals <- vec_vals$vals + 1
+    vec_vals
+  }
+)
+
+print(vec_vals)
+```
+
+## A Primative Vector Object in R (cont'd)
+
+```{r}
+# R
+print(vec_vals$add_one(vec_vals))
+
+```
+
+Note two differences:
+
+1. Python uses `.` instead of our `$`. 
+2. The calling object is invisibly passes as the first argument.
+
+## Plotting with Objects
+
+```{r fig.height=3.5, fig.width=6}
+# R
+
+library(ggplot2)
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point()
+```
+
+## Plotting with Objects
+
+```{python, echo = FALSE}
+import warnings
+warnings.filterwarnings("ignore")
+```
+
+```{python eval = FALSE, warning = FALSE}
+# Python
+
+import plotnine
+from plotnine import *
+
+plotnine.options.figure_size = (2, 1)
+
+ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +\
+  geom_point() + theme(subplots_adjust={'right': .7})
+```
+
+## Plotting with Objects (cont'd)
+
+```{python warning = FALSE, echo = FALSE}
+# Python
+
+import plotnine
+from plotnine import *
+
+plotnine.options.figure_size = (4, 2)
+
+ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +\
+  geom_point() + theme(subplots_adjust={'right': .7})
+```
+
+## What's with `+\`
+
+### Python expects something to the left and right of `+\`.
+
+### It can't find the second argument on the second line.
+
+### So we need to tell the interpreter to look at the next line with `\`.
+
+### Alternative is to wrap the entire statement in `()`
+
+```{python eval = FALSE}
+(ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +
+    geom_point() + theme(subplots_adjust={'right': .7}))
+```
+
+## Where are the objects?
+
+The `ggplot` function creates an object of type `ggplot`.
+
+```{python warning = FALSE}
+# Python
+
+p = ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species"))
+type(p)
+```
+
+## Where are the methods?
+
+`+` is an _infix operator_ 
+
+- a function where the first argument is on the left of the operator and the second is on the right
+- it is implemented via the `__add__` method.
+
+```{python warning = FALSE}
+# Python
+
+dir(p)
+```
+
+## We can call `__add__` with `.`
+
+```{python, warning = FALSE}
+# Python
+
+p = ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species"))
+
+geom = geom_point()
+type(geom)
+theme_change = theme(subplots_adjust={'right': .7})
+
+# Note that __add__ creates copies.
+p = p.__add__(geom)
+p = p.__add__(theme_change)
+```
+
+## We can call `__add__` with `.` (cont'd)
+
+```{python, warning = FALSE}
+# Python
+
+p.draw()
+```
