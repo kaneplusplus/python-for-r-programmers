@@ -128,9 +128,9 @@ taster_counts = pd.value_counts(wine['taster_name'].values)
 
 ```{python}
 # Let's get the individuals with at least 1000 tastings.
-keep_taster = taster_counts[taster_counts > 1000]
+keep_tasters = taster_counts[taster_counts > 1000]
 
-wine = wine[wine.taster_name.isin(keep_tasters)]
+wine = wine[wine.taster_name.isin(keep_tasters.keys())]
 
 (wine.points.groupby(wine.taster_name).describe().sort_values("mean",
   ascending = False))
@@ -138,23 +138,26 @@ wine = wine[wine.taster_name.isin(keep_tasters)]
 
 ## A Linear Regression
 
-```{python}
+```{python, echo = FALSE}
 # What is the assocation between price and points?
 import statsmodels.formula.api as sm
 
 fit = sm.ols(formula = "points ~ price", data = wine).fit()
-fit.summary()
+
+fit.summary() # Try this yourself to see the output
 
 ```
 
-## A Slightly More Complicated Linear Regression
+## Another Linear Regression
 
 ```{python}
+np.sort(wine.variety.unique())
+
 # Is there an interaction with variety?
 fit = sm.ols(formula = "points ~ log_price + variety + price:variety", \
   data = wine).fit()
-fit.summary()
-np.sort(wine.variety.unique())
+fit.summary() # Ommited for slide real estate.
+
 ```
 
 ## Which wines are the best buy?
@@ -165,6 +168,11 @@ wine = wine.assign(resid = fit.resid)
 wine = wine.assign(fitted = fit.fittedvalues)
 under_priced = wine[wine.resid == np.max(wine.resid)]
 under_priced.keys()
+```
+
+## Which wines are the best buy (cont'd)?
+
+```{python}
 under_priced.values
 ```
 
@@ -175,4 +183,12 @@ over_priced = wine[wine.resid == np.min(wine.resid)]
 over_priced.values
 ```
 
-## Wrapping up.
+## Wrapping up
+
+### Python has modeled most of it's data science libraries after R
+
+### Python's programming constructs although distinct provide a new twist on familar method of programming
+
+### If you can understand the syntax you can figure out how to use the libraries
+
+

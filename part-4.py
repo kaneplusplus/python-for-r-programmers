@@ -70,9 +70,9 @@ wine = wine[wine.variety.isin(variety_count.keys())]
 taster_counts = pd.value_counts(wine['taster_name'].values)
 
 # Let's get the individuals with at least 1000 tastings.
-keep_taster = taster_counts[taster_counts > 1000]
+keep_tasters = taster_counts[taster_counts > 1000]
 
-wine = wine[wine.taster_name.isin(keep_tasters)]
+wine = wine[wine.taster_name.isin(keep_tasters.keys())]
 
 (wine.points.groupby(wine.taster_name).describe().sort_values("mean", 
   ascending = False))
