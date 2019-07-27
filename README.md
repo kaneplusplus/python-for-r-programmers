@@ -29,7 +29,7 @@ Preparation) and participate in this process.
 | 12:00 PM - 1:30 PM  | Lunch
 | 1:30 PM - 3:00 PM   | Part 3: Building Software Systems using Object-Oriented Programming
 | 3:00 - 3:15 PM      | Break
-| 3:15 - 5:00         | Part 4: Case Study 
+| 3:15 - 5:00         | Part 4: Working with Data
 
 # Pre-course Preparation
 
