@@ -5,6 +5,7 @@ output:
   ioslides_presentation:
     theme: flatly
     smaller: true
+    widescreen: true
 ---
 
 ```{r echo = FALSE}
@@ -82,12 +83,17 @@ source p4rp/bin/activate
 # p4rp\bin\activate.bat
 
 # Install the needed packages.
-pip3 install pandas numpy
+pip3 install numpy pandas seaborn plotnine
 ```
 
 ## Numeric Computing {.smaller}
 
 Python doesn't have a built-in notion of vectorized operations.
+
+```{r echo = FALSE}
+library(reticulate)
+use_virtualenv("./p4rp")
+```
 
 ```{python error = TRUE}
 # Python

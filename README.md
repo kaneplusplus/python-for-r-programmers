@@ -37,8 +37,8 @@ Please install the following software before the class begins:
 
 1. [R](https://www.r-project.org/) (version >= 3.5)
 2. [Python](https://www.python.org/) (version >= 3.7)
-3. The Python pip3 package (instructions are [here](https://stackoverflow.com/questions/6587507/how-to-install-pip-with-python-3).
-4. The Python virualenv package instructions [here](https://www.pythoncentral.io/how-to-install-virtualenv-python/).
+3. The Python pip3 package (instructions are [here](https://stackoverflow.com/questions/6587507/how-to-install-pip-with-python-3)).
+4. The Python virualenv package (instructions [here](https://www.pythoncentral.io/how-to-install-virtualenv-python/)).
 
 While not required, it is recommended that you install 
 [RStudio](https://www.rstudio.com/) to build the class documents.

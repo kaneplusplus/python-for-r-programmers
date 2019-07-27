@@ -11,10 +11,10 @@ virtualenv -p python3 p4rp
 source p4rp/bin/activate
 
 # The following *may* work on Windows.
-# p4rp\bin\activate.bat
+# p4rp\Scripts\activate.bat
 
 # Install the needed packages.
-pip3 install numpy pandas seaborn plotnine joblib xlrd
+pip3 install numpy pandas seaborn plotnine 
 
 # Download wine reviews from:
 # https://www.kaggle.com/zynicide/wine-reviews/downloads/wine-reviews.zip

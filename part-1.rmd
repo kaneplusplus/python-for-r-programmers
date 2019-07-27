@@ -99,10 +99,14 @@ virtualenv -p python3 p4rp
 source p4rp/bin/activate
 
 # The following *may* work on Windows.
-# p4rp\bin\activate.bat
+# p4rp\Scripts\activate.bat
 
 # Install the needed packages.
-pip3 install pandas numpy
+pip3 install numpy pandas seaborn plotnine
+
+# Download wine reviews from:
+# https://www.kaggle.com/zynicide/wine-reviews/downloads/wine-reviews.zip
+
 ```
 
 ## Running Python and R from RStudio {.smaller}
@@ -115,6 +119,7 @@ cat("```{r}\n# R\nlibrary(reticulate)\nuse_virtualenv(\"./p4rp\")\n```")
 
 ```{r echo = FALSE}
 library(reticulate)
+use_python("/usr/local/bin/python3", required = TRUE)
 use_virtualenv("./p4rp")
 ```
 
