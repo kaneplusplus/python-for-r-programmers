@@ -1,0 +1,178 @@
+---
+title: 'Part 4: Working with Data'
+author: "Michael Kane, Yale University"
+output: 
+  ioslides_presentation:
+    theme: flatly
+    smaller: true
+---
+
+```{r echo = FALSE}
+library(reticulate)
+use_virtualenv("./p4rp")
+```
+
+# Overview of Part 4 {.smaller}
+
+## Highlights from Part 3
+
+### Generators
+
+### Objects 
+
+## Topics for this part
+
+### Some Data Cleaning with Pandas
+
+### The Pricing Wine
+
+## Importing Data with Pandas
+
+```{python}
+import numpy as np
+import pandas as pd
+import plotnine
+from plotnine import *
+
+plotnine.options.figure_size = (2, 1)
+
+wine = pd.read_csv("winemag-data-130k-v2.csv")
+
+wine = wine.drop('Unnamed: 0', axis = 1)
+
+# How many rows?
+wine.shape[0]
+
+# What are the column names?
+wine.keys()
+```
+
+## Dealing with Missing Data
+
+```{python}
+# How many missing countries?
+wine[ ~ wine['country'].isnull() ].shape[0]
+
+# Drop them
+wine = wine[ ~ wine['country'].isnull() ]
+```
+
+## How many wineries and countries?
+```{python}
+# How many unique wineries?
+len(wine['winery'].unique())
+
+# How many countries?
+len(wine['country'].unique())
+```
+
+## Visualizing Country Counts
+```{python}
+
+# Make country categorical, ordered by count.
+country_list = wine['country'].value_counts().index.tolist()
+country_cat = pd.Categorical(wine['country'], categories = country_list)
+wine = wine.assign(country_cat = country_cat)
+
+# Where are the wines from?
+(ggplot(wine, aes(x = "country_cat")) +
+    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+    geom_histogram())
+```
+
+## How much do they cost?
+
+```{python}
+(ggplot(wine, aes(x = "price")) +
+    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+    geom_histogram())
+```
+
+## Switching to the log scale
+
+```{python}
+# Let's log. Get rid of NaN's first.
+wine = wine[ ~ wine['price'].isna() ]
+wine = wine.assign(log_price = np.log(wine['price']))
+
+(ggplot(wine, aes(x = "log_price")) +
+    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+    geom_histogram())
+```
+
+## Wine Varieties
+
+```{python}
+# How many types are represented?
+variety_count = pd.value_counts(wine.variety.values)
+
+# How many varieties have been rated at least 1000 times?
+np.sum(variety_count > 1000)
+variety_count = variety_count[variety_count > 1000]
+
+wine = wine[wine.variety.isin(variety_count.keys())]
+```
+
+## Wine Rating
+
+```{python}
+# What is the average number points per variety?
+(wine.points.groupby(wine.variety).describe().sort_values("mean",
+  ascending = False))
+
+# How many tasters?
+taster_counts = pd.value_counts(wine['taster_name'].values)
+```
+
+## Subsetting / Filtering
+
+```{python}
+# Let's get the individuals with at least 1000 tastings.
+keep_taster = taster_counts[taster_counts > 1000]
+
+wine = wine[wine.taster_name.isin(keep_tasters)]
+
+(wine.points.groupby(wine.taster_name).describe().sort_values("mean",
+  ascending = False))
+```
+
+## A Linear Regression
+
+```{python}
+# What is the assocation between price and points?
+import statsmodels.formula.api as sm
+
+fit = sm.ols(formula = "points ~ price", data = wine).fit()
+fit.summary()
+
+```
+
+## A Slightly More Complicated Linear Regression
+
+```{python}
+# Is there an interaction with variety?
+fit = sm.ols(formula = "points ~ log_price + variety + price:variety", \
+  data = wine).fit()
+fit.summary()
+np.sort(wine.variety.unique())
+```
+
+## Which wines are the best buy?
+
+```{python}
+# Which wine is the most overpriced?
+wine = wine.assign(resid = fit.resid)
+wine = wine.assign(fitted = fit.fittedvalues)
+under_priced = wine[wine.resid == np.max(wine.resid)]
+under_priced.keys()
+under_priced.values
+```
+
+## Which ones are the worst?
+
+```{python}
+over_priced = wine[wine.resid == np.min(wine.resid)]
+over_priced.values
+```
+
+## Wrapping up.

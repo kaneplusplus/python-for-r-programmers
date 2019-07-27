@@ -330,6 +330,20 @@ def add_one(v):
 print(add_one(3))
 ```
 
+## Documenting your function
+
+```{python}
+# Python
+
+def add_one(v):
+    '''Add one to a vector of numeric values.'''
+    ret = v + 1
+    print(ret)
+    ret
+
+help(add_one)
+```
+
 # Lists
 
 ## R Lists {.smaller}

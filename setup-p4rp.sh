@@ -14,4 +14,7 @@ source p4rp/bin/activate
 # p4rp\bin\activate.bat
 
 # Install the needed packages.
-pip3 install numpy pandas seaborn plotnine joblib
+pip3 install numpy pandas seaborn plotnine joblib xlrd
+
+# Download wine reviews from:
+# https://www.kaggle.com/zynicide/wine-reviews/downloads/wine-reviews.zip

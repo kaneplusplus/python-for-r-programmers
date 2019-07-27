@@ -36,11 +36,9 @@ use_virtualenv("./p4rp")
 
 ### Function with State: R Mutable Closures and Python Generators
 
-### R and Python's dispatch
+### R and Python's Dispatch
 
 ### Python Classes and Objects
-
-### Building an OLS Learner
 
 # Function with State: R Mutable Closures and Python Generators
 
