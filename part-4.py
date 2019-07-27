@@ -85,7 +85,7 @@ fit.summary()
 
 # Is there an interaction with variety?
 fit = sm.ols(formula = "points ~ log_price + variety", data = wine).fit()
-fit = sm.ols(formula = "points ~ log_price + variety + price:variety", \
+fit = sm.ols(formula = "points ~ log_price + variety + log_price:variety", \
   data = wine).fit()
 fit.summary()
 
@@ -102,4 +102,4 @@ under_priced.values
 over_priced = wine[wine.resid == np.min(wine.resid)]
 over_priced.values
 
-
+wine.points.groupby(wine.title).describe().sort_values("mean", ascending = False)

@@ -1,3 +1,4 @@
+
 # Course Materials for Bootstrap Learning Python with R
 
 This repository houses all of the materials to be presented at the 
@@ -42,3 +43,7 @@ Please install the following software before the class begins:
 
 While not required, it is recommended that you install 
 [RStudio](https://www.rstudio.com/) to build the class documents.
+
+# Contact me with questions
+
+michael dot kane at yale dot edu
