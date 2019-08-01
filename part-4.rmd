@@ -42,6 +42,12 @@ wine = wine.drop('Unnamed: 0', axis = 1)
 
 # How many rows?
 wine.shape[0]
+```
+
+## Importing Data with Pandas
+
+```{python}
+# Python
 
 # What are the column names?
 wine.keys()
@@ -58,6 +64,7 @@ wine = wine[ ~ wine['country'].isnull() ]
 ```
 
 ## How many wineries and countries?
+
 ```{python}
 # How many unique wineries?
 len(wine['winery'].unique())
@@ -75,10 +82,12 @@ country_cat = pd.Categorical(wine['country'], categories = country_list)
 wine = wine.assign(country_cat = country_cat)
 
 # Where are the wines from?
-(ggplot(wine, aes(x = "country_cat")) +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+p = (ggplot(wine, aes(x = "country_cat")) +
+      theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+      geom_histogram())
+p.draw()
 ```
+
 
 ## How much do they cost?
 
@@ -95,9 +104,10 @@ wine = wine.assign(country_cat = country_cat)
 wine = wine[ ~ wine['price'].isna() ]
 wine = wine.assign(log_price = np.log(wine['price']))
 
-(ggplot(wine, aes(x = "log_price")) +
+p = (ggplot(wine, aes(x = "log_price")) +
     theme(axis_text_x=element_text(rotation=270, hjust=1)) +
     geom_histogram())
+p.draw()
 ```
 
 ## Wine Varieties
@@ -118,7 +128,10 @@ wine = wine[wine.variety.isin(variety_count.keys())]
 ```{python}
 # What is the average number points per variety?
 (wine.points.groupby(wine.variety).describe().sort_values("mean",
-  ascending = False))
+  ascending = False))[:10]
+```
+
+```{python}
 
 # How many tasters?
 taster_counts = pd.value_counts(wine['taster_name'].values)
@@ -138,25 +151,25 @@ wine = wine[wine.taster_name.isin(keep_tasters.keys())]
 
 ## A Linear Regression
 
-```{python, echo = FALSE}
+```{python, echo = TRUE}
 # What is the assocation between price and points?
 import statsmodels.formula.api as sm
 
 fit = sm.ols(formula = "points ~ price", data = wine).fit()
 
-fit.summary() # Try this yourself to see the output
+ols_summary = fit.summary() # Try this yourself to see the output
 
 ```
 
 ## Another Linear Regression
 
-```{python}
+```{python, eval = TRUE}
 np.sort(wine.variety.unique())
 
 # Is there an interaction with variety?
 fit = sm.ols(formula = "points ~ log_price + variety + price:variety", \
   data = wine).fit()
-fit.summary() # Ommited for slide real estate.
+ols_summary = fit.summary() # Ommited for slide real estate.
 
 ```
 
