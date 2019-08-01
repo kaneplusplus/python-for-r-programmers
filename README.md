@@ -1,3 +1,6 @@
+# Course Web page
+
+The course webpage is [here.](https://kaneplusplus.github.io/python-for-r-programmers/))
 
 # Course Materials for Bootstrap Learning Python with R
 
