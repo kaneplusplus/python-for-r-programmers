@@ -8,33 +8,22 @@ by the American Statistical Association.
 
 # The Course
 
-The course is scheduled from 8:30 AM to 5:00 PM on July 27, 2019 
-in room 405 of the Colorado Convention Center. All materials will be posted to 
-this Github repository as it becomes available.
+This was a full day course, broken down into four parts.
 
-## Format
+1. [Backgrounds and Basics](part-1.html)
+2. [Digging Deeper](part-2.html)
+3. [Building Software Systems](part-3.html)
+4. [Working with Data](part-4.html)
 
-We will be running Python and R code during the class and students are 
-expected to interact with code, the instructor, and each other. We will 
-building software and constructing analyses, and it is expected that 
-students will bring a laptop with software installed (see Pre-course
-Preparation) and participate in this process.
+# Materials
 
-## Schedule
-
-| Time | Session |
-| ---- | ------- |
-| 8:30 AM - 10:15     | AM  Part 1: Background and Basics
-| 10:15 AM - 10:30 AM | Break
-| 10:30 - 12:00       | Part 2: Digging Deeper into Python Programming Constructs
-| 12:00 PM - 1:30 PM  | Lunch
-| 1:30 PM - 3:00 PM   | Part 3: Building Software Systems using Object-Oriented Programming
-| 3:00 - 3:15 PM      | Break
-| 3:15 - 5:00         | Part 4: Working with Data
+The slides were generated using RMarkdown in RStudio. Other setup scripts are
+included along with a single Python file to reproduce the data analysis in 
+Part 4.
 
 # Pre-course Preparation
 
-Please install the following software before the class begins:
+The following software should be installed to reproduce the slides and examples.
 
 1. [R](https://www.r-project.org/) (version >= 3.5)
 2. [Python](https://www.python.org/) (version >= 3.7)
@@ -44,6 +33,14 @@ Please install the following software before the class begins:
 While not required, it is recommended that you install 
 [RStudio](https://www.rstudio.com/) to build the class documents.
 
-# Contact me with questions
+# Contact me
 
-michael dot kane at yale dot edu
+I'm happy to take pull request that fix bugs or improve the slides. If you 
+have questions you can [submit an issue](https://github.com/kaneplusplus/python-for-r-programmers/issues).
+
+# License and Copyright
+
+I (Michael Kane) am the copyright holder. You can reuse or alter these slides
+under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
