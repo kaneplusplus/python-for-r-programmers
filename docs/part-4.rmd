@@ -34,7 +34,7 @@ import pandas as pd
 import plotnine
 from plotnine import *
 
-plotnine.options.figure_size = (2, 1)
+plotnine.options.figure_size = (4, 2)
 
 wine = pd.read_csv("winemag-data-130k-v2.csv")
 
@@ -74,7 +74,8 @@ len(wine['country'].unique())
 ```
 
 ## Visualizing Country Counts
-```{python}
+
+```{python, eval = FALSE}
 
 # Make country categorical, ordered by count.
 country_list = wine['country'].value_counts().index.tolist()
@@ -88,25 +89,68 @@ p = (ggplot(wine, aes(x = "country_cat")) +
 p.draw()
 ```
 
+## Visualizing Country Counts
+
+```{python, echo = FALSE}
+
+# Make country categorical, ordered by count.
+country_list = wine['country'].value_counts().index.tolist()
+country_cat = pd.Categorical(wine['country'], categories = country_list)
+wine = wine.assign(country_cat = country_cat)
+
+# Where are the wines from?
+p = (ggplot(wine, aes(x = "country_cat")) +
+      theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+      geom_histogram() +
+      theme(subplots_adjust={'bottom': .3}))
+p.draw()
+```
+
 
 ## How much do they cost?
 
 ```{python}
-(ggplot(wine, aes(x = "price")) +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+p = (ggplot(wine, aes(x = "price")) +
+        theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+        geom_histogram() +
+        theme(subplots_adjust={'bottom': .3}))
+p.draw()
 ```
 
 ## Switching to the log scale
 
-```{python}
+```{python, eval = FALSE}
 # Let's log. Get rid of NaN's first.
 wine = wine[ ~ wine['price'].isna() ]
 wine = wine.assign(log_price = np.log(wine['price']))
 
-p = (ggplot(wine, aes(x = "log_price")) +
+p = (ggplot(wine, aes(x = "price")) +
+    scale_x_continuous(trans='log2') +
     theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+    geom_histogram() +
+    theme(subplots_adjust={'bottom': .3}))
+    
+p.draw()
+```
+
+## Switching to the log scale (cont'd)
+
+```{python, echo = FALSE, warning = FALSE, message = FALSE}
+import warnings
+warnings.filterwarnings("ignore")
+
+# Let's log. Get rid of NaN's first.
+wine = wine[ ~ wine['price'].isna() ]
+wine = wine.assign(log_price = np.log(wine['price']))
+
+p = (ggplot(wine, aes(x = "price")) +
+    scale_x_continuous(trans='log2') +
+    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+    geom_histogram() +
+    xlab("Price") +
+    ylab("Count") +
+    theme(subplots_adjust={'left': .1, 'bottom': 0.2}))
+    
 p.draw()
 ```
 
@@ -139,7 +183,7 @@ taster_counts = pd.value_counts(wine['taster_name'].values)
 
 ## Subsetting / Filtering
 
-```{python}
+```{python, eval = FALSE}
 # Let's get the individuals with at least 1000 tastings.
 keep_tasters = taster_counts[taster_counts > 1000]
 

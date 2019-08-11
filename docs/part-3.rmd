@@ -251,7 +251,7 @@ print(head(print_methods, 20))
 
 ### The interesting part is not adding one. It is building objects that perform an operation with a common name for different types.
 
-## We are going to start by building a _class_ which describes types of objects.
+### We are going to start by building a _class_ which describes types of objects.
 
 ## The `AddOneToNumericList` Class
 

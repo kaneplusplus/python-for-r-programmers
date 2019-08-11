@@ -11,8 +11,8 @@ by the American Statistical Association.
 This was a full day course, broken down into four parts.
 
 1. [Backgrounds and Basics](part-1.html)
-2. [Digging Deeper](part-2.html)
-3. [Building Software Systems](part-3.html)
+2. [Digging Deeper into Python Programming Constructs](part-2.html)
+3. [Building Software Systems  using Object-Oriented Programming](part-3.html)
 4. [Working with Data](part-4.html)
 
 # Materials

@@ -42,8 +42,6 @@ I won the 2010 ASA Chamber's Statistical Software Award for the Bigmemory Projec
 
 I have ~7 package on [CRAN](https://cran.r-project.org/) and have developed packages (in Python and R) featured in [DARPA's Open Software Catalog](https://www.darpa.mil/opencatalog?PP=49).
 
-I'm a founding member and of a start-up specializing in clinical trial data analyses where I architect and develop key (mostly cloud-based) analysis infrastructure.
-
 # Becoming a Polyglot Programmer
 
 ## Why learn Python 
@@ -51,9 +49,10 @@ I'm a founding member and of a start-up specializing in clinical trial data anal
 "Use the best tool for the job" is great advice if you know how to use all of the tools.
 
 Python is a great general-purpose programming language.
-- It is [popular](https://www.tiobe.com/tiobe-index/).
+
+- It is [popular](https://www.tiobe.com/tiobe-index/)
 - Simple syntax
-- Has a lot of facilities in non-data-science applications.
+- A lot of facilities in non-data-science applications
 
 You learn to separate syntax from construct.
 
@@ -365,7 +364,7 @@ v <- c(v, list(3))
 print(v)
 ```
 
-## R Lists Continued {.smaller}
+## R Lists (cont'd) {.smaller}
 
 ```{r}
 # R
@@ -533,7 +532,7 @@ l = list(range(1, 4))
 print( [x + 1 for x in l] )
 ```
 
-## A note on Tuples {.smaller}
+## A Note on Tuples {.smaller}
 
 In Python a tuple is an _immutable_ list. 
 
