@@ -84,42 +84,53 @@ Both of them are [Turing complete](https://en.wikipedia.org/wiki/Turing_complete
 
 ## setup-p4rp.sh {.smaller}
 
-```{bash, eval = FALSE}
-# Make sure python 3 and pip3 are installed on you machine and accessible from the
-# command line.
+```{r eval = FALSE}
+# Install reticulate if it's not already there.
+if (!require(reticulate)) {
+  install.packages("reticulate")
+}
 
-# Install virtualenv.
-pip3 install virtualenv
+library(reticulate)
 
-# Create a "python for R programmer's" virtual environment.
-virtualenv -p python3 p4rp
+# Install miniconda.
+install_miniconda()
 
-# Activate the virtual environment. Note: this works for Mac and Linux.
-source p4rp/bin/activate
+# Remove the default r-reticulate installation if you want a newer version of python.
+conda_remove("r-reticulate")
 
-# The following *may* work on Windows.
-# p4rp\Scripts\activate.bat
+# Install a newer version.
+conda_create(python_version = "3.8",
+             channel = "anaconda",
+             envname="r-reticulate",
+             packages = c("numpy", "pandas"))
 
-# Install the needed packages.
-pip3 install numpy pandas seaborn plotnine
+use_condaenv("r-reticulate")
+
+conda_list()
+
+# Install extra packages like this - after use_condaenv() has been called.
+# py_install("pandas")
+
+# See your current setup.
+# py_config()
 
 # Download wine reviews from:
 # https://www.kaggle.com/zynicide/wine-reviews/downloads/wine-reviews.zip
-
 ```
 
 ## Running Python and R from RStudio {.smaller}
 
 Tell RStudio/RMarkdown to use the `reticulate` package and load our newly created virtual environment.
 
-```{r comment="", echo = FALSE}
-cat("```{r}\n# R\nlibrary(reticulate)\nuse_virtualenv(\"./p4rp\")\n```")
+
+```{r setup, include = FALSE}
+library(reticulate)
+use_condaenv("r-reticulate")
 ```
 
 ```{r echo = FALSE}
 library(reticulate)
-use_python("/usr/local/bin/python3", required = TRUE)
-use_virtualenv("./p4rp")
+use_condaenv("r-reticulate")
 ```
 
 Now check that it works:
@@ -128,7 +139,7 @@ Now check that it works:
 cat("```{python}\n# Python\nprint(\"Hello world from Python!\")\n```")
 ```
 
-```{python echo = FALSE}
+```{python echo = TRUE}
 print("Hello world from Python!")
 ```
 

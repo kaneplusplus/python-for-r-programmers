@@ -9,7 +9,7 @@ output:
 
 ```{r echo = FALSE}
 library(reticulate)
-use_virtualenv("./p4rp")
+use_condaenv("r-reticulate")
 ```
 
 # Overview of Part 2 {.smaller}
@@ -304,7 +304,7 @@ An object is an _instance_ of a class.
 - `np` is an instance of type `Module`.
 - `list_vals` is an instance of type `list`.
 
-## A Primative Vector Object in R
+## A Primitive Vector Object in R
 
 ```{r}
 # R
@@ -320,7 +320,7 @@ vec_vals <- list(
 print(vec_vals)
 ```
 
-## A Primative Vector Object in R (cont'd)
+## A Primitive Vector Object in R (cont'd)
 
 ```{r}
 # R
