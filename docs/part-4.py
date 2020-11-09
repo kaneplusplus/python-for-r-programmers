@@ -36,23 +36,23 @@ country_cat = pd.Categorical(wine['country'], categories = country_list)
 wine = wine.assign(country_cat = country_cat)
 
 # Where are the wines from?
-(ggplot(wine, aes(x = "country_cat")) +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+#(ggplot(wine, aes(x = "country_cat")) +
+#    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+#    geom_histogram())
 
 # How much do they cost?
-(ggplot(wine, aes(x = "price")) +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+#(ggplot(wine, aes(x = "price")) +
+#    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+#    geom_histogram())
 
 # Let's log. Get rid of NaN's first.
 wine = wine[ ~ wine['price'].isna() ]
 wine = wine.assign(log_price = np.log(wine['price']))
 
-(ggplot(wine, aes(x = "price")) +
-    scale_x_continuous(trans='log') +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram())
+#(ggplot(wine, aes(x = "price")) +
+#    scale_x_continuous(trans='log') +
+#    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
+#    geom_histogram())
 
 # How many types are represented?
 variety_count = pd.value_counts(wine.variety.values)
@@ -103,4 +103,4 @@ under_priced.values
 over_priced = wine[wine.resid == np.min(wine.resid)]
 over_priced.values
 
-wine.points.groupby(wine.title).describe().sort_values("mean", ascending = False)
+#wine.points.groupby(wine.title).describe().sort_values("mean", ascending = False)

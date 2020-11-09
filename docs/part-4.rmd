@@ -1,34 +1,77 @@
 ---
 title: 'Part 4: Working with Data'
-author: "Michael Kane, Yale University"
-output: 
-  ioslides_presentation:
-    theme: flatly
-    smaller: true
+author: "Michael Kane<br><span style = 'font-size: 80%;'>School of Public Health, Biostatistics Department<br>Yale University<br><br>"
+date: '`r icon::fa("github")` [kaneplusplus](https://github.com/kaneplusplus)<br> `r icon::fa("twitter")` [kaneplusplus](https://twitter.com/kaneplusplus)'
+output:
+  xaringan::moon_reader:
+    css: [duke-blue, metropolis, tamu-fonts]
+    titleSlideClass: [left, middle]
 ---
 
 ```{r echo = FALSE}
 library(reticulate)
-use_virtualenv("./p4rp")
+xaringanExtra::use_panelset()
+use_condaenv("python-for-r-developers", required = TRUE)
 ```
 
-# Overview of Part 4 {.smaller}
+# <br> Overview of Part 4
+
+--
+<br>
 
 ## Highlights from Part 3
 
+--
+<br>
+
 ### Generators
 
-### Objects 
+--
+<br>
 
-## Topics for this part
+### Classes and Objects 
 
-### Some Data Cleaning with Pandas
+---
 
-### The Pricing Wine
+# <br> Overview of Part 4 
 
-## Importing Data with Pandas
+<br>
+
+### Importing Data with Pandas
+
+--
+<br>
+
+### Data Cleaning
+
+--
+<br>
+
+### Data Exploration
+
+--
+<br>
+
+### Pricing Wine
+
+--
+<br>
+
+### R's R6 Object System
+
+--
+<br>
+
+### Calling Python from R
+
+---
+
+# <br> Importing Data with Pandas 
+
+<br>
 
 ```{python}
+# Python 
 import numpy as np
 import pandas as pd
 import plotnine
@@ -44,7 +87,15 @@ wine = wine.drop('Unnamed: 0', axis = 1)
 wine.shape[0]
 ```
 
-## Importing Data with Pandas
+---
+
+# <br> Importing Data with Pandas
+
+<br>
+
+## Accessing columns
+
+--
 
 ```{python}
 # Python
@@ -53,7 +104,15 @@ wine.shape[0]
 wine.keys()
 ```
 
+---
+
+# <br> Data Cleaning 
+
+<br>
+
 ## Dealing with Missing Data
+
+--
 
 ```{python}
 # How many missing countries?
@@ -61,9 +120,18 @@ wine[ ~ wine['country'].isnull() ].shape[0]
 
 # Drop them
 wine = wine[ ~ wine['country'].isnull() ]
+wine.shape
 ```
 
+---
+
+# <br> Data Cleaning
+
+<br>
+
 ## How many wineries and countries?
+
+--
 
 ```{python}
 # How many unique wineries?
@@ -73,7 +141,15 @@ len(wine['winery'].unique())
 len(wine['country'].unique())
 ```
 
+---
+
+# <br> Data Exploration 
+
+<br>
+
 ## Visualizing Country Counts
+
+--
 
 ```{python, eval = FALSE}
 
@@ -89,9 +165,17 @@ p = (ggplot(wine, aes(x = "country_cat")) +
 p.draw()
 ```
 
-## Visualizing Country Counts
+---
 
-```{python, echo = FALSE}
+# <br> Data Exploration 
+
+<br>
+
+## Where do the wines come from?
+
+--
+
+```{python, echo = TRUE}
 
 # Make country categorical, ordered by count.
 country_list = wine['country'].value_counts().index.tolist()
@@ -103,39 +187,40 @@ p = (ggplot(wine, aes(x = "country_cat")) +
       theme(axis_text_x=element_text(rotation=270, hjust=1)) +
       geom_histogram() +
       theme(subplots_adjust={'bottom': .3}))
-p.draw()
+
+# p.draw()
 ```
 
+---
+
+# <br> Data Exploration 
+
+<br>
 
 ## How much do they cost?
+
+--
 
 ```{python}
 p = (ggplot(wine, aes(x = "price")) +
         theme(axis_text_x=element_text(rotation=270, hjust=1)) +
         geom_histogram() +
         theme(subplots_adjust={'bottom': .3}))
-p.draw()
+
+# p.draw()
 ```
 
-## Switching to the log scale
+---
 
-```{python, eval = FALSE}
-# Let's log. Get rid of NaN's first.
-wine = wine[ ~ wine['price'].isna() ]
-wine = wine.assign(log_price = np.log(wine['price']))
+# <br> Data Exploration
 
-p = (ggplot(wine, aes(x = "price")) +
-    scale_x_continuous(trans='log2') +
-    theme(axis_text_x=element_text(rotation=270, hjust=1)) +
-    geom_histogram() +
-    theme(subplots_adjust={'bottom': .3}))
-    
-p.draw()
-```
+<br>
 
-## Switching to the log scale (cont'd)
+## Switching to the log scale 
 
-```{python, echo = FALSE, warning = FALSE, message = FALSE}
+--
+
+```{python, echo = TRUE, warning = FALSE, message = FALSE}
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -151,10 +236,18 @@ p = (ggplot(wine, aes(x = "price")) +
     ylab("Count") +
     theme(subplots_adjust={'left': .1, 'bottom': 0.2}))
     
-p.draw()
+# p.draw()
 ```
 
+---
+
+# <br> Data Exploration 
+
+<br>
+
 ## Wine Varieties
+
+--
 
 ```{python}
 # How many types are represented?
@@ -165,9 +258,16 @@ np.sum(variety_count > 1000)
 variety_count = variety_count[variety_count > 1000]
 
 wine = wine[wine.variety.isin(variety_count.keys())]
+wine.shape
 ```
 
+---
+
+# <br> Data Exploration 
+
 ## Wine Rating
+
+--
 
 ```{python}
 # What is the average number points per variety?
@@ -175,25 +275,49 @@ wine = wine[wine.variety.isin(variety_count.keys())]
   ascending = False))[:10]
 ```
 
+---
+
+# <br> Data Exploration 
+
+<br>
+
+## Who are the wine tasters?
+
 ```{python}
 
 # How many tasters?
 taster_counts = pd.value_counts(wine['taster_name'].values)
+taster_counts[:10]
 ```
 
+---
+
+# <br> Data Exploration
+
+<br>
 ## Subsetting / Filtering
 
-```{python, eval = FALSE}
+--
+
+```{python, eval = TRUE}
 # Let's get the individuals with at least 1000 tastings.
 keep_tasters = taster_counts[taster_counts > 1000]
 
 wine = wine[wine.taster_name.isin(keep_tasters.keys())]
 
 (wine.points.groupby(wine.taster_name).describe().sort_values("mean",
-  ascending = False))
+  ascending = False))[:5]
 ```
 
+---
+
+# <br> Pricing Wine
+
+<br>
+
 ## A Linear Regression
+
+--
 
 ```{python, echo = TRUE}
 # What is the assocation between price and points?
@@ -202,10 +326,17 @@ import statsmodels.formula.api as sm
 fit = sm.ols(formula = "points ~ price", data = wine).fit()
 
 ols_summary = fit.summary() # Try this yourself to see the output
-
 ```
 
+---
+
+# <br> Pricing Wine
+
+<br>
+
 ## Another Linear Regression
+
+--
 
 ```{python, eval = TRUE}
 np.sort(wine.variety.unique())
@@ -214,8 +345,15 @@ np.sort(wine.variety.unique())
 fit = sm.ols(formula = "points ~ log_price + variety + price:variety", \
   data = wine).fit()
 ols_summary = fit.summary() # Ommited for slide real estate.
-
 ```
+
+---
+
+# <br> Pricing Wine
+
+<br>
+
+--
 
 ## Which wines are the best buy?
 
@@ -227,11 +365,23 @@ under_priced = wine[wine.resid == np.max(wine.resid)]
 under_priced.keys()
 ```
 
+---
+
+# <br> Pricing Wine
+
+<br>
+
 ## Which wines are the best buy (cont'd)?
 
 ```{python}
 under_priced.values
 ```
+
+---
+
+# <br> Pricing Wine
+
+<br>
 
 ## Which ones are the worst?
 
@@ -240,12 +390,297 @@ over_priced = wine[wine.resid == np.min(wine.resid)]
 over_priced.values
 ```
 
-## Wrapping up
+---
 
-### Python has modeled most of it's data science libraries after R
+# <br> R's R6 Object System
 
-### Python's programming constructs although distinct provide a new twist on familar method of programming
+<br>
 
-### If you can understand the syntax you can figure out how to use the libraries
+--
 
+## Python's object are standard in object oriented programming
+
+<br>
+
+--
+
+## R has a similar system called R6
+
+<br>
+
+--
+
+## Methods and attributes are associated with an environment
+
+<br>
+
+--
+
+## Instead of `.` , we use `$`.
+
+---
+
+
+# <br> R's R6 Object System
+
+--
+
+```{r}
+library(R6)
+AddOneToList <- R6Class(
+  "AddOneToList",
+  public = list(
+      initialize = function(lst) {
+        private$lst <- lst
+        self$greet()
+      },
+      add_one = function() {
+        stop("Method is abstract")
+      },
+      get_lst = function() {
+        stop("Method is abstract")
+      },
+      greet = function() {
+        cat(paste0("Abstract add one to list created", ".\n"))
+      }
+    ),
+  private = list(
+    lst = NULL
+  )
+)
+```
+
+---
+
+# <br> R's R6 Object System
+
+<br>
+
+## Let's try to instantiate an object
+
+<br>
+
+```{r error = TRUE}
+lst_adder <- AddOneToList$new(as.list(1:5))
+lst_adder$add_one()
+```
+
+---
+
+# <br> R's R6 Object System
+
+```{r}
+AddOneToNumericList <- R6Class("AddOneToNumericList",
+  inherit = AddOneToList,
+  public = list(
+    initialize = function(lst) {
+      #browser()
+      if (!all(is.numeric(unlist(lst)))) {
+        stop("All values should be numeric.")
+      }
+      super$initialize(lst)
+    },
+    add_one = function() {
+      private$lst <- lapply(private$lst, function(x) x + 1)
+    },
+    get_lst = function() {
+      private$lst
+    },
+    greet = function() {
+      cat(paste0("Concrete add one to list created", ".\n"))
+    }
+  )
+)
+```
+
+---
+
+# <br> R's R6 Object System
+
+<br>
+
+## Let's instantiate a proper concrete object
+
+```{r error = TRUE}
+lst_adder <- AddOneToNumericList$new(as.list(letters[1:5]))
+
+lst_adder <- AddOneToNumericList$new(as.list(1:5))
+
+lst_adder$add_one()
+
+unlist(lst_adder$get_lst())
+```
+---
+
+# <br> Calling Python from R
+
+<br>
+
+--
+
+## R mirrors Pythons object through the R6 class system
+
+<br>
+
+--
+
+## We've created Python code that does something useful
+
+<br>
+
+--
+
+- We'd like to be able to reuse the code and objects created.
+
+--
+
+<br>
+
+- We'd like to use R to augment our analysis.
+
+
+---
+
+# <br> Calling Python from R 
+
+<br>
+
+## Sourcing a Python file
+```{r}
+# R
+source_python("part-4.py", convert = FALSE)
+
+ls()[1:10]
+```
+
+---
+
+# <br> Calling Python from R
+
+<br>
+
+## Get the column names of the wine data set into R
+
+```{r message = FALSE, warning = FALSE}
+library(dplyr)
+
+col_keys <- wine$keys()$to_list() %>% 
+  py_to_r()
+
+col_keys
+```
+
+---
+
+# <br> Calling Python from R
+
+## Now read the Pandas data frame into R as a `tibble`
+
+
+```{r}
+# R
+library(tibble)
+library(DT)
+
+handle_nan_and_unlist <- function(x) {
+  x <- unlist(x)
+  x[is.nan(x)] <- NA
+  x
+}
+
+wine_df <- wine[as.list(setdiff(col_keys, "country_cat"))] %>%
+  py_to_r() %>%
+  mutate_if(is.list, handle_nan_and_unlist) %>%
+  as_tibble()
+```
+
+---
+
+# <br> Calling Python from R
+
+## Now read the Pandas data frame into R as a `tibble`
+
+
+```{r}
+wine_df %>% 
+  head(n = 100) %>% 
+  datatable()
+```
+
+---
+
+# <br> Calling Python from R
+
+<br>
+
+## What about our numerical routines?
+
+```{r}
+import("numpy", as = "np")
+
+ols_code <- '
+def ols(Y, X):
+  q, r = np.linalg.qr(X)
+  return(np.linalg.inv( r ).dot( q.T ).dot( Y ))
+'
+
+writeLines(ols_code, "ols_code.py")
+source_python("ols_code.py", convert = FALSE)
+```
+
+---
+
+# <br> Calling Python from R
+
+## What about our numerical routines?
+
+```{r}
+form <- points ~ log_price + variety + price:variety
+wine_mf <- model.frame(form, wine_df) 
+X <- model.matrix(form, wine_mf)
+Y <- matrix(wine_mf$points, ncol = 1)
+
+fit <- ols(X, Y)$flatten() %>%  py_to_r()
+names(fit) <- colnames(X)
+fit[1:10]
+```
+
+---
+
+# <br> Wrapping up
+
+<br>
+
+## Python has modeled most of it's data science libraries after R
+
+<br>
+
+## Python's programming constructs although distinct provide a new twist 
+## on familar method of programming
+
+<br>
+
+## If you can understand the syntax you can figure out how to use the libraries
+
+<br>
+
+## If you want, you can do this from R
+
+---
+
+```{css, echo = FALSE}
+.huge {
+  font-size: 200%;
+}
+```
+
+<br>
+<br>
+<br>
+<br>
+.center[
+.huge[
+You made it to the end of the class. Thanks very much!
+]
+]
 

@@ -692,6 +692,8 @@ p = p.__add__(theme_change)
 p.draw()
 ```
 
+---
+
 # <br> Summing the section up
 
 <br>
