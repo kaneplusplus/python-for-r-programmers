@@ -1,114 +1,204 @@
 ---
 title: 'Part 2: Digging Deeper into Python Programming Constructs'
-author: "Michael Kane, Yale University"
-output: 
-  ioslides_presentation:
-    theme: flatly
-    smaller: true
+author: "Michael Kane<br><span style = 'font-size: 80%;'>School of Public Health, Biostatistics Department<br>Yale University<br><br>"
+date: '`r icon::fa("github")` [kaneplusplus](https://github.com/kaneplusplus)<br> `r icon::fa("twitter")` [kaneplusplus](https://twitter.com/kaneplusplus)'
+output:
+  xaringan::moon_reader:
+    css: [duke-blue, metropolis, tamu-fonts]
+    titleSlideClass: [left, middle]
 ---
+
+```{r echo = FALSE}
+library(reticulate)
+xaringanExtra::use_panelset()
+use_condaenv("python-for-r-developers", required = TRUE)
+```
+
+# <br> Highlights from Part 1
+
+
+<br>
+
+## 1. Python has a notion of environments which enacapsulate the interpreter 
+## and a set of package.
+
+--
+<br>
+
+## 2. Python syntax is distinct from, but not unrelated to R
+
+--
+<br>
+
+## 3. Most of the time we've call functions with `function(object)` but 
+## sometimes it's been `object.function()` (as with copy). We'll talk more 
+## about this later.
+
+--
+<br>
+
+## 4. Zero indexing.
+
+---
+
+# <br> Topics for Part 2
+
+<br>
+
+## 1. Packages
+
+--
+<br>
+
+## 2. Numeric computing with Numpy.
+
+--
+<br>
+
+## 3. Using Objects
+
+---
+
+# <br> Python Packages
+
+--
+<br>
+
+## Python is "batteries not included."
+--
+
+<br>
+
+## R includes _a lot_ of computing facilities with the core language.
+
+--
+
+<br> 
+
+## 1. Plotting
+
+--
+
+## 2. Vectors, matrices, and arrays
+
+--
+
+## 3. Optimized and vectorized linear algebra routines
+
+--
+
+## 4. Suite of statistical functions and models
+
+--
+
+## 5. `data.frame`s
+--
+
+<br>
+
+## None of these are included with Python.
+
+---
+
+# <br> Python Packages
+
+--
+
+<br>
+
+## Python Virtual Environments and Package Management
+
+--
+
+<br>
+
+## This class uses conda to create an environment and add packages. 
+
+<br>
+
+--
+
+## [Anaconda](https://www.anaconda.com/) creates environments and adds packages from [Anaconda Cloud](https://anaconda.org/anaconda/repo). 
+## It is an environment and package manager, not just for Python. 
+<br>
+--
+
+## There is an R installation.
+<br>
+--
+
+## I have heard only bad things about it.
+
+---
+
+# <br> Python Packages
+
+
+<br>
+
+## What's with the emphasis on environments? 
+
+<br>
+
+--
+
+Development culture is different than R's
+
+- R community (CRAN maintainers) place a higher value on package user's time by enforcing _downstream dependencies_. This is the reason R's `install.packages()` function "just works". It does a better job of hiding analysts from package development.
+
+--
+
+- Python community places higher value on developer time. It is often up to the user to sort out compatibility problems between packages. This became a big enough issue that companies, like [Continuum Analytics](http://www.continuumanalytics.com/), began creating pre-packaged virtual environments.
+
+--
+
+Result is that R users tend to use environments (with `packrat`, `switchr`, `renv`) more for reproducibility, Python users tend to use them more for package compatibility.
+
+---
+
+# <br> Numerical Computing 
+
+<br>
+
+## Python doesn't have a built-in notion of vectorized operations.
+
+--
 
 ```{r echo = FALSE}
 library(reticulate)
 use_condaenv("r-reticulate")
 ```
 
-# Overview of Part 2 {.smaller}
-
-## Highlights from Part 1
-
-### 1. Python has a notion of environments which enacapsulate the interpreter and a set of package
-
-### 2. Python syntax is distinct from, but not unrelated to R
-
-### 3. Most of the time we've call functions with `function(object)` but sometimes it's been `object.function()` (as with copy). We'll talk more about this later.
-
-### 4. Zero indexing.
-
-## Topics for this part
-
-### 1. Packages
-
-### 2. Numeric computing with Numpy.
-
-### 3. Using Objects
-
-### 3. Generators
-
-# Packages
-
-## Python is "batteries not included"
-
-R includes _a lot_ of computing facilities with the core language.
-
-1. Plotting
-2. Vectors, matrices, and arrays
-3. Optimized and vectorized linear algebra routines
-4. Suite of statistical functions and models
-5. `data.frame`s
-
-None of these are included with Python.
-
-## Python Virtual Environments and Package Management
-
-This class uses virtualenv to create an environment and pip3 within the environment to add packages. Packages are install from [PyPI](https://pypi.org/).
-
-[Anaconda](https://www.anaconda.com/) is another option for both creating environments and adding packages from [Anaconda Cloud](https://anaconda.org/anaconda/repo). It is an environment and package manager, not just for Python. There is an R installation, I have heard only bad things about this build.
-
-## What's with the emphasis on environments? {.smaller}
-
-Development culture is different than R's
-
-- R community (CRAN maintainers) place a higher value on package user's time by enforcing _downstream dependencies_. This is the reason R's `install.packages()` function "just works". It does a better job of hiding analysts from package development.
-- Python community places higher value on developer time. It is often up to the user to sort out compatibility problems between packages. This became a big enough issue that companies, like [Continuum Analytics](http://www.continuumanalytics.com/), began creating pre-packaged virtual environments.
-
-Result is that R users use environments (with `packrat`, `switchr`, `renv`) for reproducibility, Python users use them for reproducibility and package compatibility.
-
-## A second look at setup-p4rp.sh {.smaller}
-
-```{bash, eval = FALSE}
-# Make sure python 3 and pip3 are installed on you machine and accessible from the
-# command line.
-
-# Install virtualenv.
-pip3 install virtualenv
-
-# Create a "python for R programmer's" virtual environment.
-virtualenv -p python3 p4rp
-
-# Activate the virtual environment. Note: this works for Mac and Linux.
-source p4rp/bin/activate
-
-# The following *may* work on Windows.
-# p4rp\bin\activate.bat
-
-# Install the needed packages.
-pip3 install numpy pandas seaborn plotnine
-```
-
-## Numeric Computing {.smaller}
-
-Python doesn't have a built-in notion of vectorized operations.
-
-```{r echo = FALSE}
-library(reticulate)
-use_virtualenv("./p4rp")
-```
 
 ```{python error = TRUE}
 # Python
 list(range(10)) + 1
 ```
 
+--
+
 We can perform this with list comprehensions. 
+
+--
 
 ```{python error = TRUE}
 # Python
 print( [x + 1 for x in list(range(10))] )
 ```
 
+--
+
 Or, we could create a method for adding values to lists, but it's already been done.
 
-## Importing the `numpy` Package {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## Importing the `numpy` Package
+
+--
 
 ```{python}
 # Python
@@ -116,11 +206,15 @@ import numpy
 print( numpy.arange(10) + 1 )
 ```
 
+--
+
 ```{python}
 # Python
 from numpy import *
 print( arange(10) + 1 )
 ```
+
+--
 
 ```{python}
 # Python
@@ -128,9 +222,13 @@ import numpy as np
 print( np.arange(10) + 1 )
 ```
 
-## It's all arrays {.smaller}
+---
 
-Numpy doesn't distinguish vectors, matrices, and arrays.
+# <br> Numerical Computing
+
+<br>
+
+## Numpy doesn't distinguish vectors, matrices, and arrays
 
 ```{python}
 # Python
@@ -144,7 +242,14 @@ mat = np.array( [ [1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12] ] )
 print(mat)
 ```
 
-## It's all arrays (cont'd) {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+
+## Numpy doesn't distinguish vectors, matrices, and arrays (cont'd) 
 
 ```{python}
 # Python
@@ -153,18 +258,30 @@ tensor3 = np.array( [ [[1, 2], [3, 4]], [[5, 6], [7,8]] ])
 print(tensor3)
 ```
 
+---
+
+# <br> Numerical Computing
+
+<br>
+
 ## What is the dimension of a numpy array?
+
+<br>
 
 ```{python}
 # Python
 print(vec.shape)
 print(mat.shape)
-print(tensor3)
+print(tensor3.shape)
 ```
 
-## How are values stored?
+---
 
-Check the `dtype`.
+# <br> Numerical Computing
+
+<br>
+
+## What kind of values are stored?
 
 ```{python}
 # Python
@@ -176,7 +293,13 @@ double(tensor3).dtype
 np.array([str(x) for x in mat.flatten().tolist()], dtype = str).reshape(4, 3)
 ```
 
-## What other information is stored in a numpy array? {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## What other information is stored in a numpy array? 
 
 ```{python} 
 # Python
@@ -186,7 +309,13 @@ len(vec_slots)
 print( [vec_slots[-i] for i in range(1, 51)] )
 ```
 
-## What else is in numpy? {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## What else is in numpy? 
 
 ```{python}
 # Python
@@ -196,7 +325,13 @@ len(np_objects)
 print( [np_objects[i] for i in range(70)] )
 ```
 
-## Array Indexing {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## Array Indexing
 
 ```{r}
 # R
@@ -206,7 +341,13 @@ mat
 mat[1:2, 1:3]
 ```
 
-## Array Indexing (cont'd) {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## Array Indexing (cont'd)
 
 ```{python}
 # Python
@@ -218,7 +359,13 @@ mat[1:3, :3]
 mat[ [0, 3, 2], :]
 ```
 
-## Boolean Indexing {.smaller}
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## Boolean Indexing
 
 ```{r}
 # R
@@ -227,7 +374,14 @@ mat > 2
 mat[mat > 2]
 ```
 
-## Boolean Indexing (cont'd) {.smaller}
+---
+
+
+# <br> Numerical Computing
+
+<br>
+
+## Boolean Indexing (cont'd) 
 
 ```{python}
 # Python
@@ -235,6 +389,13 @@ mat[mat > 2]
 mat > 2
 mat[mat > 2]
 ```
+
+---
+
+# <br> Numerical Computing
+
+<br>
+
 
 ## Fitting Ordinary Least Squares
 
@@ -257,6 +418,12 @@ $$
 $$
 to create a _numerically stable_, if not limited, implementation of OLS.
 
+---
+
+# <br> Numerical Computing
+
+<br>
+
 ## Our implementation
 
 ```{python}
@@ -274,6 +441,13 @@ iris_mat = iris[["sepal_width", "petal_length", "petal_width"]].values
 print(ols(iris['sepal_length'].values, iris_mat))
 ```
 
+---
+
+# <br> Numerical Computing
+
+<br>
+
+
 ## Our implementation (cont'd)
 
 ```{r}
@@ -282,7 +456,32 @@ fit <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width - 1,
 fit$coefficients
 ```
 
-# Using Objects to Visualize Data
+---
+
+# <br> Numerical Computing
+
+<br>
+
+## How would you debug this?
+
+<br>
+
+## Python doesn't have error recover the way R does 
+## (`options(error = recover)`)
+
+<br>
+
+## It does let you set breakpoints with the pdb package though.
+
+<br>
+
+## [pdb-debug.py](pdb-debug.py)
+
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
 
 ## Object Oriented Programming
 
@@ -304,6 +503,10 @@ An object is an _instance_ of a class.
 - `np` is an instance of type `Module`.
 - `list_vals` is an instance of type `list`.
 
+---
+
+# <br> Using Objects to Visualize Data
+
 ## A Primitive Vector Object in R
 
 ```{r}
@@ -320,6 +523,12 @@ vec_vals <- list(
 print(vec_vals)
 ```
 
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
+
 ## A Primitive Vector Object in R (cont'd)
 
 ```{r}
@@ -333,22 +542,37 @@ Note two differences:
 1. Python uses `.` instead of our `$`. 
 2. The calling object is invisibly passes as the first argument.
 
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
+
 ## Plotting with Objects
 
 ```{r fig.height=3.5, fig.width=6}
 # R
-
 library(ggplot2)
 
 ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
-  geom_point()
+  geom_point() +
+  theme_minimal()
 ```
+
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
 
 ## Plotting with Objects
 
 ```{python, echo = FALSE}
 import warnings
 warnings.filterwarnings("ignore")
+
+import plotnine
+from plotnine import *
 ```
 
 ```{python eval = FALSE, warning = FALSE}
@@ -357,40 +581,48 @@ warnings.filterwarnings("ignore")
 import plotnine
 from plotnine import *
 
-plotnine.options.figure_size = (2, 1)
+plotnine.options.figure_size = (5, 3)
 
-ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +\
+p = ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +\
   geom_point() + theme(subplots_adjust={'right': .7})
+p.draw()
 ```
 
-## Plotting with Objects (cont'd)
+---
 
-```{python warning = FALSE, echo = FALSE}
-# Python
+# <br> Using Objects to Visualize Data
 
-import plotnine
-from plotnine import *
+<br>
 
-plotnine.options.figure_size = (4, 2)
+## What's with `+\` ?
 
-ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +\
-  geom_point() + theme(subplots_adjust={'right': .7})
-```
-
-## What's with `+\`
+<br>
 
 ### Python expects something to the left and right of `+\`.
 
+<br>
+
 ### It can't find the second argument on the second line.
+
+<br>
 
 ### So we need to tell the interpreter to look at the next line with `\`.
 
+<br>
+
 ### Alternative is to wrap the entire statement in `()`
+
 
 ```{python eval = FALSE}
 (ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species")) +
     geom_point() + theme(subplots_adjust={'right': .7}))
 ```
+
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
 
 ## Where are the objects?
 
@@ -402,6 +634,12 @@ The `ggplot` function creates an object of type `ggplot`.
 p = ggplot(iris, aes(x = "sepal_length", y = "sepal_width", color = "species"))
 type(p)
 ```
+
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
 
 ## Where are the methods?
 
@@ -415,6 +653,12 @@ type(p)
 
 dir(p)
 ```
+
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
 
 ## We can call `__add__` with `.`
 
@@ -432,10 +676,58 @@ p = p.__add__(geom)
 p = p.__add__(theme_change)
 ```
 
+---
+
+# <br> Using Objects to Visualize Data
+
+<br>
+
 ## We can call `__add__` with `.` (cont'd)
 
-```{python, warning = FALSE}
+<br>
+
+```{python eval = FALSE, warning = FALSE}
 # Python
 
 p.draw()
 ```
+
+# <br> Summing the section up
+
+<br>
+
+## Python includes less functionality and relies more on packages than R.
+
+<br>
+
+## Everything in Python is an object
+
+<br>
+
+## Object have functions and data that are accessed with `.`
+
+<br>
+
+## Those functions and data can be found with `dir()`
+
+<br>
+
+## Their documentation can be found with `help()`
+
+---
+
+```{css, echo = FALSE}
+.huge {
+  font-size: 200%;
+}
+```
+
+<br>
+<br>
+<br>
+<br>
+.center[
+.huge[
+You made it to the end of part 2.
+]
+]

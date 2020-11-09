@@ -1,52 +1,104 @@
 ---
 title: 'Part 1: Background and Basics'
-author: "Michael Kane, Yale University"
-output: 
-  ioslides_presentation:
-    theme: flatly
+author: "Michael Kane<br><span style = 'font-size: 80%;'>School of Public Health, Biostatistics Department<br>Yale University<br><br>"
+date: '`r icon::fa("github")` [kaneplusplus](https://github.com/kaneplusplus)<br> `r icon::fa("twitter")` [kaneplusplus](https://twitter.com/kaneplusplus)'
+output:
+  xaringan::moon_reader:
+    css: [duke-blue, metropolis, tamu-fonts]
+    titleSlideClass: [left, middle]
 ---
 
-# Welcome to Bootstrap Learning Python with R
+```{r echo = FALSE}
+library(reticulate)
+xaringanExtra::use_panelset()
+use_condaenv("python-for-r-developers")
+```
+
+# <br> Welcome to Bootstrap Learning Python with R
+
+<br>
 
 ## What are the goals of this class?
 
+<br>
+
+--
+
 Learn how to translate your R programming skills to other langauges, Python in particular.
+
+--
 
 Separate programming language _syntax_ from programming _constructs_.
 
+--
+
 Appreciate the linguistic differences between R and Python and think about the implications for expressing computations and execution efficiency.
+
+--
 
 Be able to evaluate objective strengths and weaknesses of a programming language.
 
+---
+
+# <br> Welcome to Bootstrap Learning Python with R
+
+<br>
+
 ## How will this class be taught?
+
+<br>
+
+--
 
 I'm going to start with a core-programming constructs in R. I'll describe it, show how it works, and talk about some of it's distinguishing characteristics
 
+--
+
 I'll show the equivalent/analogous construct in Python. I'll describe it, show how it works, and we'll discuss some of the differences
+
+--
 
 You will follow along.
 
+--
+
 You execute the code, modify it, maybe (probably) break it, and ask questions.
 
-## Who am I and why should you listen to me?
+---
+
+# <br> Welcome to Bootstrap Learning Python with R
+
+<br>
+
+## <br> Who am I and why should you listen to me?
+
+<br>
 
 My name is Michael Kane, I'm an Assistant Professor of Biostatistics at Yale University and I work on methods in optimization-based machine learning, numerical and statistical computing.
 
+--
+
 I have a degree in Computer Engineering, master's degrees in Electrical Engineering and Statistics, and a Ph.D. in Statistics.
+
+--
 
 I've been a software architect and developer for a couple of different start-ups and other businesses. I built software in ~15 different programming languages.
 
-## Who am I and why should you listen to me? (cont'd)
+---
 
-I won the 2010 ASA Chamber's Statistical Software Award for the Bigmemory Project; a package that allows R to accomodate and compute with large matrices.
+# <br> Becoming a Polyglot Programmer
 
-I have ~7 package on [CRAN](https://cran.r-project.org/) and have developed packages (in Python and R) featured in [DARPA's Open Software Catalog](https://www.darpa.mil/opencatalog?PP=49).
-
-# Becoming a Polyglot Programmer
+<br>
 
 ## Why learn Python 
 
+<br>
+
+--
+
 "Use the best tool for the job" is great advice if you know how to use all of the tools.
+
+--
 
 Python is a great general-purpose programming language.
 
@@ -54,84 +106,149 @@ Python is a great general-purpose programming language.
 - Simple syntax
 - A lot of facilities in non-data-science applications
 
+--
+
 You learn to separate syntax from construct.
+
+--
 
 It will make you a better programmer.
 
+---
+
+# <br> Becoming a Polyglot Programmer
+
+<br>
+
 ## Is Python Better than R?
+
+<br>
+
+--
 
 If you are looking for a [head-to-head comparison by a computer scientist, Norm Matloff](https://github.com/matloff/R-vs.-Python-for-Data-Science) does a good job.
 
+
+--
+
+<br> 
+
 I like avoiding the questions about language + community in favor of characterizing the language.
 
+---
+
+# <br> Becoming a Polyglot Programmer
+
+<br>
+
+## Is Python Better than R?
+
+<br>
+
+--
+
 Python
-- Object-oriented focused (manages complexity in large sofware systems - Tensorflow)
+- Object-oriented focused (manages complexity in large software systems - Keras + Tensorflow)
 - Readable
+
+--
 
 R
 - A pragmatic version of Lisp
 - More dynamic (better meta-programming capabilities - DSD's)
 
+--
+
 Both of them are [Turing complete](https://en.wikipedia.org/wiki/Turing_completeness#Non-mathematical_usage), most comparisons are about areas of emphasis of the community.
 
-# Materials and Setup
+---
+
+# <br> Materials and Setup
+
+<br>
 
 ## Python Virtual Environments
 
+<br>
+
+--
+
 "Python, like most other modern programming languages, has its own unique way of downloading, storing, and resolving packages (or modules). While this has its advantages, there were some _interesting_ decisions made about package storage, resolution [and compatibility], which has lead to some problems—particularly with how and where packages are stored." 
 
--- [realpython](https://realpython.com/python-virtual-environments-a-primer/) (emphasis added)
+-[realpython](https://realpython.com/python-virtual-environments-a-primer/) (emphasis added)
 
-## setup-p4rp.sh {.smaller}
 
-```{r eval = FALSE}
-# Install reticulate if it's not already there.
-if (!require(reticulate)) {
-  install.packages("reticulate")
-}
+---
 
+# <br> Materials and Setup
+
+<br>
+
+## What are my options for running Python?
+
+<br>
+
+1. The command line
+
+--
+
+2. RStudio
+
+--
+
+3. RMarkdown
+
+--
+
+4. IPython notebooks
+
+---
+
+# <br> Materials and Setup
+
+<br>
+
+## How do we install Python and manage packages?
+
+--
+
+<br>
+
+## We use R
+
+<br>
+
+1. Install the `reticulate`.
+
+--
+
+2. Use `reticulate::install_miniconda()` to create a conda installation.
+
+--
+
+3. Create a conda environment with `conda_create()`
+
+--
+
+4. Start the conda environment.
+
+--
+
+
+See [python-and-conda-install.r](python-and-conda-install.r) for details.
+
+---
+
+# <br> Start the conda environment, run from R Markdown
+
+<br>
+
+```{r echo = TRUE, eval = FALSE}
 library(reticulate)
-
-# Install miniconda.
-install_miniconda()
-
-# Remove the default r-reticulate installation if you want a newer version of python.
-conda_remove("r-reticulate")
-
-# Install a newer version.
-conda_create(python_version = "3.8",
-             channel = "anaconda",
-             envname="r-reticulate",
-             packages = c("numpy", "pandas"))
-
-use_condaenv("r-reticulate")
-
-conda_list()
-
-# Install extra packages like this - after use_condaenv() has been called.
-# py_install("pandas")
-
-# See your current setup.
-# py_config()
-
-# Download wine reviews from:
-# https://www.kaggle.com/zynicide/wine-reviews/downloads/wine-reviews.zip
+use_condaenv("python-for-r-developers", required = TRUE)
 ```
 
-## Running Python and R from RStudio {.smaller}
-
-Tell RStudio/RMarkdown to use the `reticulate` package and load our newly created virtual environment.
-
-
-```{r setup, include = FALSE}
-library(reticulate)
-use_condaenv("r-reticulate")
-```
-
-```{r echo = FALSE}
-library(reticulate)
-use_condaenv("r-reticulate")
-```
+--
 
 Now check that it works:
 
@@ -143,21 +260,43 @@ cat("```{python}\n# Python\nprint(\"Hello world from Python!\")\n```")
 print("Hello world from Python!")
 ```
 
-# The Basics
+---
+
+# <br> The Basics
+
+<br>
 
 ## Style (according to [PEP-8](https://www.python.org/dev/peps/pep-0008))
 
+--
+
+<br>
+
 Python doesn't use { } to enclose code blocks it uses indentation. _[Four spaces](https://www.python.org/dev/peps/pep-0008/#indentation)_ is recommended.
+
+--
 
 [Line length should be limited to 72 characters](https://www.python.org/dev/peps/pep-0008/#maximum-line-length).
 
+--
+
 [Functions and variables should use lowercase with words separated by underscores as necessary to improve readability](https://www.python.org/dev/peps/pep-0008/#method-names-and-instance-variables).
 
-Variables, types, and functions cannot contain "." This is an infix operator in Python and it's used to call methods (functions) and member variables.
+--
+
+Variables, types, and functions cannot contain "." This is an infix operator in Python and it's used to call methods (functions) and member attributes.
+
+---
+
+# <br> The Basics
+
+<br>
 
 ## Getting help
 
-Python's help function is `help()`. R's help function is the prefix operator `?`.
+<br>
+
+R's help function is the prefix operator `?`.
 
 ```{r eval = FALSE}
 # R
@@ -165,15 +304,27 @@ Python's help function is `help()`. R's help function is the prefix operator `?`
 ?`?`
 ```
 
+--
+
+<br>
+
+Python's help function is `help()`. 
+
 ```{python eval = FALSE}
 # Python
 # Get help on the help function
 help(help)
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
 ## Variables and Assignment
 
-In Python assignments are performed using `=`. There is no `<-`
+--
 
 ```{r}
 # R
@@ -181,13 +332,27 @@ a <- 3
 print(a + 2)
 ```
 
+--
+
+In Python assignments are performed using `=`. There is no `<-`
+
+--
+
 ```{python}
 # Python
 a = 3
 print(a + 2)
 ```
 
-## Basic types {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Basic types in R
+
+--
 
 ```{r}
 # R
@@ -200,6 +365,16 @@ character <- "string"
 cat(logical, numeric, integer, complex, character)
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
+## Basic types in Python
+
+--
+
 ```{python}
 # Python
 logical = True
@@ -210,15 +385,27 @@ character = "string"
 print(logical, numeric, integer, complex, character)
 ```
 
-## What about NA, NaN, Null, -Inf, and Inf? {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## What about NA, NaN, Null, -Inf, and Inf?
+
+--
 
 Python has `None`
 
 - `NA` and others need to be imported from packages. 
-- It is rougly equivalent to `Null`.
+- It is roughly equivalent to `Null`.
 - We'll get to these later.
 
+--
+
 "Use `is` when you want to check against an object's identity (e.g. checking to see if var is None). Use `==` when you want to check equality (e.g. Is var equal to 3?)." - [Stack Overflow User](https://stackoverflow.com/questions/14247373/python-none-comparison-should-i-use-is-or#14247383)
+
+--
 
 ```{python}
 #Python
@@ -226,10 +413,16 @@ a = None
 print(a is None)
 ```
 
+---
 
-# Control Structures and Functions
+# <br> The Basics
 
-## if Statements {.smaller}
+<br>
+
+## If Statements in R
+
+--
+
 
 ```{r}
 # R
@@ -241,6 +434,16 @@ if (!confused) {
 }
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
+## if Statements in Python
+
+--
+
 ```{python}
 # Python
 confused = False
@@ -250,7 +453,17 @@ else:
     print("Huh?")
 ```
 
-## `if-elif-else` {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## `if-elif-else`
+
+--
+
+<br>
 
 ```{python}
 # Python
@@ -265,7 +478,13 @@ else:
     print("Where am I?")
 ```
 
-## `for` Loops {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## `for` Loops
 
 ```{R}
 # R
@@ -280,7 +499,13 @@ for i in (1, 2, 3):
     print(i)
 ```
 
-## Another `for` Loop {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Another `for` Loop
 
 ```{R}
 # R
@@ -295,7 +520,13 @@ for i in range(3):
     print(i+1)
 ```
 
-## `while` Loops {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## `while` Loops in R
 
 ```{R}
 # R
@@ -306,6 +537,14 @@ while (i < 4) {
 }
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
+## `while` Loops in Python
+
 ```{python}
 # Python
 i = 1
@@ -313,6 +552,12 @@ while i < 4:
     print(i)
     i += 1
 ```
+
+---
+
+# <br> The Basics
+
+<br>
 
 ## Functions
 
@@ -333,6 +578,12 @@ def add_one(v):
 print(add_one(3))
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
 ## Don't forget to return values you want
 
 ```{python}
@@ -344,6 +595,12 @@ def add_one(v):
     
 print(add_one(3))
 ```
+
+---
+
+# <br> The Basics
+
+<br>
 
 ## Documenting your function
 
@@ -359,9 +616,13 @@ def add_one(v):
 help(add_one)
 ```
 
-# Lists
+---
 
-## R Lists {.smaller}
+# <br> The Basics
+
+<br>
+
+## R Lists
 
 ```{r}
 # R
@@ -369,20 +630,40 @@ v <- list(1, 2)
 print(v)
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
+## R Lists
+
 ```{r}
 # R
 v <- c(v, list(3))
 print(v)
 ```
 
-## R Lists (cont'd) {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## R Lists
 
 ```{r}
 # R
 print(v[-1])
 ```
 
-## Python Lists {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Python Lists
 
 ```{python}
 # Python
@@ -396,7 +677,13 @@ v = [1, 2]
 print(v + [3])
 ```
 
-## Python Lists Continued {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Python Lists Continued 
 
 ```{python}
 # Python
@@ -404,7 +691,15 @@ v = [1, 2, 3]
 print(v[-1])
 ```
 
-## List Indexing {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## List Indexing
+
+<br>
 
 R indexes start at 1. Python starts at 0.
 
@@ -420,7 +715,11 @@ v = ['a', 'b', 'c']
 print(v[2])
 ```
 
-## List Range Indexing {.smaller}
+---
+
+# <br> The Basics
+
+<br>
 
 R indexes from the first argument _through_ the second. Python indexes from the first _up to_ the last (non-inclusive).
 
@@ -437,7 +736,13 @@ print(v[0:2])
 print(v[:2])
 ```
 
-## Lists containing values with different types {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Lists containing values with different types
 
 ```{python}
 # Python
@@ -457,7 +762,13 @@ def add_one(list_vals):
 
 ```
 
-## Lists containing values with different types (cont'd) {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Lists containing values with different types (cont'd) 
 
 ```{python}
 # Python
@@ -466,7 +777,13 @@ print(add_one(list_vals))
 print(list_vals)
 ```
 
-## Values are passed _by reference_ {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Values are passed _by reference_ 
 
 ```{python}
 # Python
@@ -486,7 +803,13 @@ def add_one(list_vals):
     return ret_vals
 ```
 
-## Values are passed _by reference_ (cont'd) {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Values are passed _by reference_ (cont'd) 
 
 ```{python}
 # Python
@@ -494,6 +817,12 @@ lv_one_added = add_one(list_vals)
 print(lv_one_added)
 print(list_vals)
 ```
+
+---
+
+# <br> The Basics
+
+<br>
 
 ## `=` Doesn't copy lists
 
@@ -505,6 +834,12 @@ b[0] = 4
 print(a)
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
 ## It does copy singletons
 
 ```{python}
@@ -515,7 +850,11 @@ b = 4
 print(a)
 ```
 
-## Lists are not like R vectors {.smaller}
+---
+
+# <br> The Basics
+
+## Lists are not like R vectors 
 
 ```{r}
 # R
@@ -529,7 +868,14 @@ a = list(range(1, 4))
 print(a)
 a + 1
 ```
-## List Comprehensions {.smaller}
+
+---
+
+# <br> The Basics
+
+<br>
+
+## List Comprehensions
 
 ```{r}
 # R
@@ -537,13 +883,27 @@ l <- as.list(1:3)
 print(lapply(l, function(x) x + 1))
 ```
 
+---
+
+# <br> The Basics
+
+<br>
+
+## List Comprehensions
+
 ```{python}
 # Python
 l = list(range(1, 4))
 print( [x + 1 for x in l] )
 ```
 
-## A Note on Tuples {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## A Note on Tuples 
 
 In Python a tuple is an _immutable_ list. 
 
@@ -557,9 +917,13 @@ first_equal, second_equal, third_equal = [ t1[i] == t2[i] for i in range(len(t1)
 print(first_equal, second_equal, third_equal)
 ```
 
-# Dictionaries 
+---
 
-## Dictionaries in Python are named lists in R) {.smaller}
+# <br> The Basics
+
+<br>
+
+## Dictionaries in Python are named lists in R) 
 
 ```{r}
 # R
@@ -576,7 +940,13 @@ l = {'a' : list(range(1, 4)),
 print(l['b'][1:4])
 ```
 
-## Dictionaries are composed of keys and values {.smaller}
+---
+
+# <br> The Basics
+
+<br>
+
+## Dictionaries are composed of keys and values
 
 ```{python}
 # Python
@@ -587,3 +957,21 @@ l = {'a' : list(range(1, 4)),
 print(l.keys())
 print(l.values())
 ```
+
+---
+
+```{css, echo = FALSE}
+.huge {
+  font-size: 200%;
+}
+```
+
+<br>
+<br>
+<br>
+<br>
+.center[
+.huge[
+Great job. You made it to the end of part 1.
+]
+]

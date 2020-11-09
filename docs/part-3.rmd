@@ -1,52 +1,91 @@
 ---
 title: 'Part 3: Building Software Systems using Object-Oriented Programming'
-author: "Michael Kane, Yale University"
-output: 
-  ioslides_presentation:
-    theme: flatly
-    smaller: true
+author: "Michael Kane<br><span style = 'font-size: 80%;'>School of Public Health, Biostatistics Department<br>Yale University<br><br>"
+date: '`r icon::fa("github")` [kaneplusplus](https://github.com/kaneplusplus)<br> `r icon::fa("twitter")` [kaneplusplus](https://twitter.com/kaneplusplus)'
+output:
+  xaringan::moon_reader:
+    css: [duke-blue, metropolis, tamu-fonts]
+    titleSlideClass: [left, middle]
 ---
 
 ```{r echo = FALSE}
 library(reticulate)
-use_virtualenv("./p4rp")
+xaringanExtra::use_panelset()
+use_condaenv("python-for-r-developers", required = TRUE)
 ```
 
-# Overview of Part 3 {.smaller}
+# <br> Highlights from Part 2
 
-## Highlights from Part 2
+--
+<br>
 
-### Another look at environments and packages
+## Another look at environments and packages
 
-### Numpy for R's vector/matrix/array operations
+--
+<br>
 
-### How to use Python Objects
+## Numpy for R's vector/matrix/array operations
 
-### Some Visualization
+--
+<br>
 
-## Feedback Questions
+## How to use Python Objects
 
-### Is Python _that_ different from R?
+--
+<br>
 
-### What do you like most about Python so far?
+## Some Visualization
 
-### Which Python constructs would you like to see in R?
+---
 
-## Topics for this part
+# <br> Feedback Questions
 
-### Function with State: R Mutable Closures and Python Generators
+--
+<br>
 
-### R and Python's Dispatch
+## Is Python _that_ different from R?
 
-### Python Classes and Objects
+--
+<br>
 
-# Function with State: R Mutable Closures and Python Generators
+## What do you like most about Python so far?
+
+--
+<br>
+
+## Which Python constructs would you like to see in R?
+
+---
+
+# <br> Topics for this part
+
+--
+<br>
+
+## Function with State: Mutable Closures and Generators
+
+--
+<br>
+
+## R and Python's Dispatch
+
+--
+<br>
+
+## Python Classes and Objects
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
 
 ## In R Function with State are called _Mutable Closures_
 
+--
+
 ```{R}
 #R
-
 increment_generator <- function(start = 1) {
   val <- start - 1
   function() {
@@ -60,6 +99,12 @@ inc()
 inc()
 ```
 
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
+
 ## How does this work?
 
 ```{R}
@@ -71,20 +116,56 @@ b <- inc()
 environment(inc)$val
 ```
 
-## So what?
+---
 
-### This is very useful for iterating over things
+# <br> Function with State: Mutable Closures and Generators
 
-- in loops it means we don't have to have all of the values we are iterating over up front - we can iterate over things that are bigger than memory
-- we can easily change the size of the things we are iterating over - useful in parallel computing where number of processors varies from machine to machine.
+<br>
+
+
+## <br> So what?
+
+<br>
+
+--
+
+## This is very useful for iterating over things
+
+--
+
+- in loops it means we don't have to have all of the values we are iterating over up front 
+
+--
+
+- we can iterate over things that are bigger than memory
+
+--
+
+- we can easily change the size of the things we are iterating over 
+
+--
+
+- useful in parallel computing where number of processors varies from machine to machine.
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
 
 ## This is the basis for iterators in R
+
+--
 
 ```{r}
 library(iterators)
 
 icount
 ```
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
 
 ## This is the basis for iterators in R
 
@@ -96,16 +177,31 @@ nextElem(it)
 nextElem(it)
 ```
 
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
+
 ## Which can be used with the `%foreach%` packge
 
 ```{r}
 library(foreach)
 registerDoSEQ()
 
-foreach(it = icount(10), .combine = c) %dopar% {
-  it + 1
-}
+system.time({
+  foreach(it = icount(10), .combine = c) %dopar% {
+    Sys.sleep(1)
+    it + 1
+  }
+})
 ```
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
 
 ## ... and is an excellent package for parallelization
 
@@ -114,24 +210,40 @@ library(doParallel)
 registerDoParallel()
 
 # Same code. Runs in parallel.
-foreach(it = icount(10), .combine = c) %dopar% {
-  it + 1
-}
+system.time({
+  foreach(it = icount(10), .combine = c) %dopar% {
+    Sys.sleep(1)
+    it + 1
+  }
+})
 ```
 
-## R's iterators ~ Python's generators
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
+
+## R's iterators $\simeq$ Python's generators
+
+<br>
 
 ```{python, error = TRUE}
 # Python
-
 def icount(n = None):
-    if n is None or not isinstance(n, int):
+    if not isinstance(n, int):
         raise ValueError("n must be an integer.")
     i = 0
     while n is None or i < n:
         yield i
         i += 1
 ```
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
 
 ## R's iterators ~ Python's generators
 
@@ -144,16 +256,28 @@ next(it)
 next(it)
 ```
 
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
+
 ## Generators and Loops
 
 ```{python, error = TRUE}
 # Python
 
-[x + 1 for x in icount(10)]
+[x + 1 for x in icount(5)]
 
-for x in icount(10):
-  print(x)
+for x in icount(5):
+  print(x + 1)
 ```
+
+---
+
+# <br> Function with State: Mutable Closures and Generators
+
+<br>
 
 ## Parallelizing Loops
 
@@ -169,9 +293,16 @@ p = Pool(processes = 4)
 p.map(add_one, icount(10))
 ```
 
-# R and Python's Dispatches
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 
 ## What is Dispatch?
+
+<br>
 
 ### The choice of which version of a method to call.
 
@@ -181,18 +312,21 @@ p.map(add_one, icount(10))
 ### A function does not dispatch.
 
 ### In R: 
-- Single dispatch is supported by S3, R5 (RC) (also implemented in packges R6 and R.oo).
+- Single dispatch is supported by S3, R5 (RC) (also implemented in packages R6 and R.oo).
 - Multiple dispatch is supported by S4.
 
 ### In Python
 - Single dispatch is handled with objects.
 - Multiple dispatch is available in a few packages.
 
-## A quick review of R's S3 dispatch
+---
+
+# <br> R and Python's Dispatches
+
+## A review of R's S3 dispatch
 
 ```{r, error = TRUE, eval = FALSE}
 # R
-
 add_one <- function(x) {
   UseMethod("add_one", x)
 }
@@ -213,7 +347,15 @@ cat("Calling foo on the number 1.")
 add_one(1)
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## A quick review of R's S3 dispatch (cont'd)
+
+<br>
 
 ```{r, error = TRUE, eval = TRUE, echo = FALSE}
 # R
@@ -238,6 +380,12 @@ cat("Calling add_one on the number 1.")
 add_one(1:10)
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## S3 in Practice
 
 ```{r, error = TRUE, eval = TRUE}
@@ -245,13 +393,36 @@ print_methods <- methods(print)
 print(head(print_methods, 20))
 ```
 
-## A Python Equivalent
+---
 
-### We already know how to do this with either lists or numpy arrays.
+# <br> R and Python's Dispatches
 
-### The interesting part is not adding one. It is building objects that perform an operation with a common name for different types.
+<br>
+
+## A Python Equivalent - objects
+
+<br>
+
+### We already know how to find and call list or numpy array methods.
+
+<br>
+
+### Let's find out how to build one of these objects, which has it's own dispatch.
+
+<br>
+
+### The interesting part is not adding one. It is building objects that 
+### perform an operation with a common name for different types.
+
+<br>
 
 ### We are going to start by building a _class_ which describes types of objects.
+
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## The `AddOneToNumericList` Class
 
@@ -268,6 +439,12 @@ class AddOneToNumericList:
     def get_lst(self):
         return(self.lst)
 ```
+
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## Creating an Instance
 
@@ -286,6 +463,12 @@ print(my_new_object.lst)
 
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Limiting access to attributes
 
 ```{python}
@@ -302,6 +485,12 @@ class AddOneToNumericList:
         return(self.__lst.copy())
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Limiting access to attributes (cont'd)
 
 ```{python, error = TRUE}
@@ -314,11 +503,27 @@ print(my_new_object.get_lst())
 print(my_new_object.__lst)
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Let's abstract this a little bit
+
+<br>
 
 ### The class works for numeric (int and float) types.
 
+<br>
+
 ### We've already implemented adding one other other types (strings).
+
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## Let's Create an _Abstract Class_ `AddOneToList`
 
@@ -343,11 +548,18 @@ class AddOneToList(ABC):
 ao = AddOneToList(list(range(1, 11)))       
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Let's Create an _Abstract Class_ `AddOneToList` (cont'd)
+
+<br>
 
 ```{python, echo = FALSE, error = TRUE}
 # Python
-
 from abc import ABC, abstractmethod 
 
 class AddOneToList(ABC):
@@ -364,6 +576,10 @@ class AddOneToList(ABC):
 
 ao = AddOneToList(list(range(1, 11)))       
 ```
+
+---
+
+# <br> R and Python's Dispatches
 
 ## `@abstractmethod` is a _Decorator_
 
@@ -384,6 +600,12 @@ divide(22, 7)
 divide(22, 0)
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Now Let's Create `AddOneToNumericList`
 
 ```{python, error = TRUE}
@@ -399,6 +621,12 @@ class AddOneToNumericList(AddOneToList):
  
 ao = AddOneToNumericList(list(range(1, 11)))       
 ```
+
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## Now Create a Concrete Classes
 
@@ -417,6 +645,12 @@ aoi.add_one()
 print(aoi.get_lst())
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## Now Create a Concrete Classes (cont'd)
 
 ```{python, error = TRUE}
@@ -425,15 +659,41 @@ print(aoi.get_lst())
 AddOneToIntList([float(x) for x in range(1, 11)])
 ```
 
-## What if I want to support a bunch of different types and let the constructor figure out which one to make?
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
+## What if I want to support a bunch of different types and let the constructor 
+## figure out which one to make?
+
+<br>
+--
 
 ### You want a _factory_
 
-### You provide a list, it figures out if it can create an instance of a class derived from AddOneToList and gives it to you.
+<br>
+--
+
+### You provide a list, it figures out if it can create an instance of a class derived from 
+### AddOneToList and gives it to you.
+
+<br>
+--
 
 ### You don't even need to specify the concrete types before hand.
 
+<br>
+--
+
 ### We'll need to revise `AddOneToList`.
+
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## `AddOneToList` Redux
 
@@ -444,14 +704,16 @@ def get_lst_type(lst):
     if len(lst) == 0:
         raise AssertionError("List length is zero.")
     lst_types = [type(lst[0]) == type(x) for x in lst]
+    if not all(lst_types):
+        raise AssertionError("All list elements must have the same type.")
     return type(lst[0])
 ```
 
-## `AddOneToList` Redux (cont'd)
+---
+
+# <br> R and Python's Dispatches
 
 ```{python, error = FALSE}
-# Python
-
 class AddOneToList(ABC):
 
     def factory(lst):
@@ -469,11 +731,17 @@ class AddOneToList(ABC):
     @abstractmethod
     def add_one(self):
         pass
+        
     @abstractmethod
     def get_lst(self):
         pass
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
 
 ## `AddOneToList` Redux (cont'd)
 
@@ -485,7 +753,15 @@ print(lsts[1].get_lst())
 print(lsts[1].get_lst())
 ```
 
+---
+
+# <br> R and Python's Dispatches
+
+<br>
+
 ## What's the point again?
+
+<br>
 
 ### Factories create the "right" class with a little bit of information.
 
@@ -494,10 +770,100 @@ print(lsts[1].get_lst())
 
 ### Methods have the same interface and do different things based on class.
 
+<br>
+
 ### Examples
 
 - data importing, a class might know how to get data from various sources
 - graphics, a class might know how to create a visualization
 - model fitting, a class might know how to fit a data set
 
+---
 
+# <br> `*args` and `**kwargs`
+
+--
+
+<br>
+
+## Both are used to take a variable number of argument.
+
+--
+
+<br>
+
+## `*args` is for unnamed arguments.
+
+--
+<br>
+
+## `**kwargs` is for named arguments.
+
+---
+
+# <br> `*args` and `**kwargs`
+
+<br>
+
+## `*args`
+
+```{r}
+star_arg <- function(...) {
+  dots <- list(...)
+  unlist(dots)
+}
+star_arg("Almost", "at", "the", "end", "of", "this", "part") 
+```
+--
+
+```{python}
+def star_arg(*argv): 
+    print([x for x in argv])
+
+star_arg("Almost", "at", "the", "end", "of", "this", "part") 
+```
+
+---
+
+# <br> `*args` and `**kwargs`
+
+## `**kwargs`
+
+```{r}
+star_star_kwarg <- function(...) {
+  dots <- list(...)
+  for (i in seq_along(dots)) {
+    print(paste(names(dots)[i], "==", dots[[i]]))
+  }
+}
+
+star_star_kwarg(first = "R", second = "Python")
+```
+
+--
+
+```{python}
+def star_star_kwarg(**kwargs): 
+    for key, value in kwargs.items():
+        print ("%s == %s" %(key, value))
+
+star_star_kwarg(first = "R", second = "Python")
+```
+
+---
+
+```{css, echo = FALSE}
+.huge {
+  font-size: 200%;
+}
+```
+
+<br>
+<br>
+<br>
+<br>
+.center[
+.huge[
+You made it to the end of part 3.
+]
+]
