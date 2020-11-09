@@ -86,6 +86,25 @@ I've been a software architect and developer for a couple of different start-ups
 
 ---
 
+# <br> What are the parts of this class?
+
+<br>
+
+## Background and Basics
+
+<br>
+
+## Digging Deeper into Python Programming Constructs
+
+<br>
+
+## Building Software Systems using Object-Oriented Programming
+
+<br>
+
+## Working with Data
+---
+
 # <br> Becoming a Polyglot Programmer
 
 <br>
